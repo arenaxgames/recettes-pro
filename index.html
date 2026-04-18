@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Recettes Pro">
@@ -23,34 +24,32 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--bdr2);border-radius:99px}
 
-/* LOADING */
 #loading{position:fixed;inset:0;z-index:6000;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px}
 .ld-logo{font-size:1.8rem;font-weight:900}
 .ld-logo em{color:var(--blue);font-style:normal}
+.ld-sub{font-size:.72rem;color:var(--dim2)}
 .ld-spin{width:28px;height:28px;border:3px solid var(--bdr2);border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* SETUP SCREEN */
 #setup-screen{position:fixed;inset:0;z-index:5000;background:var(--bg);display:none;flex-direction:column;align-items:center;justify-content:center;padding:max(30px,env(safe-area-inset-top)) 24px 30px}
 .setup-logo{font-size:1.8rem;font-weight:900;margin-bottom:6px}
 .setup-logo em{color:var(--blue);font-style:normal}
 .setup-title{font-size:.95rem;font-weight:700;margin-bottom:8px;text-align:center}
 .setup-desc{font-size:.73rem;color:var(--dim2);margin-bottom:28px;text-align:center;line-height:1.6;max-width:260px}
-.setup-inp{width:240px;background:var(--surf);border:2px solid var(--bdr);border-radius:12px;color:var(--txt);font-size:1.3rem;font-weight:700;padding:14px;text-align:center;outline:none;letter-spacing:.15em;margin-bottom:12px;font-family:inherit;transition:border-color .2s}
+.setup-inp{width:240px;background:var(--surf);border:2px solid var(--bdr);border-radius:12px;color:var(--txt);font-size:1.2rem;font-weight:700;padding:14px;text-align:center;outline:none;margin-bottom:12px;font-family:inherit;transition:border-color .2s}
 .setup-inp:focus{border-color:var(--blue)}
 .setup-btn{width:240px;background:var(--blue);border:none;border-radius:12px;color:#fff;font-size:.9rem;font-weight:700;padding:14px;cursor:pointer;font-family:inherit}
 .setup-btn:active{opacity:.85}
-.setup-hint{margin-top:12px;font-size:.65rem;color:var(--dim);text-align:center;line-height:1.6;max-width:240px}
 .setup-err{font-size:.72rem;color:var(--red);min-height:18px;margin-top:8px;text-align:center}
+.setup-hint{margin-top:12px;font-size:.65rem;color:var(--dim);text-align:center;line-height:1.6;max-width:240px}
 
-/* LOCK SCREEN */
 #lock-screen{position:fixed;inset:0;z-index:5000;background:var(--bg);display:none;flex-direction:column;align-items:center;justify-content:center;padding:max(30px,env(safe-area-inset-top)) 24px 30px}
 .lock-logo{font-size:1.8rem;font-weight:900;margin-bottom:4px}
 .lock-logo em{color:var(--blue);font-style:normal}
 .lock-sub{font-size:.68rem;color:var(--dim2);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
 .lock-desc{font-size:.72rem;color:var(--dim);margin-bottom:32px;text-align:center;line-height:1.5;max-width:230px}
 .lock-inp-wrap{position:relative;margin-bottom:16px}
-.lock-inp{width:240px;background:var(--surf);border:2px solid var(--bdr);border-radius:12px;color:var(--txt);font-size:1.4rem;font-weight:700;padding:14px 44px 14px 14px;text-align:center;outline:none;letter-spacing:.2em;font-family:inherit;-webkit-text-security:disc;transition:border-color .2s}
+.lock-inp{width:240px;background:var(--surf);border:2px solid var(--bdr);border-radius:12px;color:var(--txt);font-size:1.2rem;font-weight:700;padding:14px 44px 14px 14px;text-align:center;outline:none;font-family:inherit;transition:border-color .2s}
 .lock-inp:focus{border-color:var(--blue)}
 .lock-inp.err{border-color:var(--red)}
 .lock-eye{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--dim2);font-size:1rem;cursor:pointer;padding:4px}
@@ -58,15 +57,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .lock-btn:active{opacity:.85}
 .lock-msg{font-size:.74rem;color:var(--red);min-height:18px;text-align:center}
 
-/* SYNC BAR */
-#sync-bar{position:fixed;top:0;left:0;right:0;z-index:4500;padding:5px 13px;display:none;align-items:center;gap:7px;font-size:.67rem;transition:all .3s}
+#sync-bar{position:fixed;top:0;left:0;right:0;z-index:4500;padding:5px 13px;display:none;align-items:center;gap:7px;font-size:.67rem}
 #sync-bar.show{display:flex}
 #sync-bar.syncing{background:rgba(91,143,247,.12);border-bottom:1px solid rgba(91,143,247,.2);color:var(--blue)}
 #sync-bar.ok{background:rgba(46,201,140,.1);border-bottom:1px solid rgba(46,201,140,.15);color:var(--green)}
 #sync-bar.err{background:rgba(224,90,90,.1);border-bottom:1px solid rgba(224,90,90,.15);color:var(--red)}
 .sync-dot{width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0}
 
-/* SHELL */
 #app{flex:1;display:flex;flex-direction:column;overflow:hidden}
 #topbar{background:var(--surf);border-bottom:1px solid var(--bdr);padding:max(13px,env(safe-area-inset-top)) 13px 0;flex-shrink:0}
 .tb-row{display:flex;align-items:center;gap:8px;margin-bottom:10px}
@@ -82,7 +79,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .tab-btn{flex:1;padding:7px 0;border:none;border-bottom:2px solid transparent;background:transparent;color:var(--dim);font-size:.65rem;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap}
 .tab-btn.active{color:var(--blue);border-bottom-color:var(--blue)}
 
-/* SUB-BARS */
 .city-bar{background:var(--surf2);border-bottom:1px solid var(--bdr);padding:7px 13px;display:flex;align-items:center;gap:7px;flex-shrink:0}
 .city-inp{flex:1;background:transparent;border:none;color:var(--txt);font-size:.82rem;font-weight:600;outline:none;font-family:inherit}
 .city-inp::placeholder{color:var(--dim);font-weight:400}
@@ -98,12 +94,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .print-btn{background:transparent;border:1px solid var(--bdr);border-radius:7px;color:var(--dim2);font-size:.65rem;font-weight:600;padding:4px 9px;cursor:pointer;font-family:inherit}
 .print-btn:active{background:var(--surf2)}
 
-/* PAGES */
 #pages{flex:1;overflow:hidden;position:relative}
 .page{position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:13px 11px max(26px,env(safe-area-inset-bottom));display:none}
 .page.active{display:block}
 
-/* HOME */
 .sec-title{font-size:.58rem;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--dim);margin-bottom:9px}
 .biz-list{display:flex;flex-direction:column;gap:7px;margin-bottom:16px}
 .biz-card{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r);padding:12px 13px;display:flex;align-items:center;gap:11px;cursor:pointer}
@@ -115,7 +109,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .add-btn{width:100%;background:transparent;border:2px dashed var(--bdr);border-radius:var(--r);padding:14px;color:var(--dim2);font-size:.78rem;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:7px}
 .add-btn:active{background:var(--surf)}
 
-/* MODAL */
 .modal-ov{position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,.8);display:none;align-items:flex-end;justify-content:center}
 .modal-ov.show{display:flex}
 .modal-box{background:var(--surf);border-radius:20px 20px 0 0;border:1px solid var(--bdr);width:100%;max-width:500px;padding:20px 16px max(20px,env(safe-area-inset-bottom))}
@@ -131,7 +124,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .mbtn.pri:active{opacity:.85}
 .mbtn.sec{background:var(--surf2);border:1px solid var(--bdr);color:var(--dim2)}
 
-/* WEEK CARDS */
 .scroll-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:4px;margin-bottom:11px}
 .week-grid{display:flex;gap:8px;width:max-content}
 .day-card{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r);width:136px;flex-shrink:0;overflow:hidden}
@@ -155,7 +147,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .gbox{background:rgba(232,162,48,.1);border:1px solid rgba(232,162,48,.35);border-radius:6px;color:var(--gold);font-size:.94rem;font-weight:700;padding:6px 6px;text-align:right}
 .gbox.z{background:var(--surf2);border-color:var(--bdr);color:var(--dim);font-weight:400}
 
-/* FEES */
 .fees-panel{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r);padding:13px;margin-bottom:11px}
 .fees-title{font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin-bottom:11px}
 .fee-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;gap:8px}
@@ -170,7 +161,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .net-val{font-size:1.1rem;font-weight:800;color:var(--green)}
 .net-val.neg{color:var(--red)}
 
-/* STRIP */
 .strip{display:flex;gap:7px;overflow-x:auto;margin-bottom:11px}
 .sc{flex:1 0 80px;background:var(--surf);border:1px solid var(--bdr);border-radius:10px;padding:8px 10px;border-top-width:3px}
 .sc.cb{border-top-color:var(--blue)}.sc.cash{border-top-color:var(--green)}.sc.tot{border-top-color:var(--gold)}
@@ -180,7 +170,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .reset-btn{display:block;width:100%;background:transparent;border:1px solid var(--bdr);border-radius:9px;color:var(--dim2);font-size:.72rem;font-family:inherit;padding:9px;cursor:pointer;text-align:center;margin-top:4px}
 .reset-btn:active{background:var(--surf2)}
 
-/* HISTORY */
 .hr{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--surf);border:1px solid var(--bdr);border-radius:10px;margin-bottom:6px;cursor:pointer;gap:7px}
 .hr:active{background:var(--surf2)}
 .hr.cur{border-color:var(--blue);background:rgba(91,143,247,.05)}
@@ -196,7 +185,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .empty{text-align:center;padding:40px 18px;color:var(--dim2);font-size:.78rem}
 .empty-i{font-size:2rem;margin-bottom:9px}
 
-/* MONTHLY */
 .month-card{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r);margin-bottom:10px;overflow:hidden}
 .month-head{padding:10px 13px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between}
 .month-name{font-size:.82rem;font-weight:800}
@@ -208,7 +196,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .mrow.net .mk{color:var(--green);font-weight:700}
 .mrow.net .mv{color:var(--green);font-weight:800}
 
-/* RESET HISTORY */
 .rh-card{background:var(--surf);border:1px solid var(--bdr);border-radius:10px;padding:11px 12px;margin-bottom:7px}
 .rh-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px}
 .rh-date{font-size:.68rem;font-weight:700;color:var(--violet)}
@@ -219,7 +206,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .rh-a span{font-weight:600;color:var(--txt)}
 .clear-hist-btn{display:block;width:100%;background:transparent;border:1px solid rgba(224,90,90,.3);border-radius:9px;color:var(--red);font-size:.72rem;font-family:inherit;padding:9px;cursor:pointer;text-align:center;margin-top:6px}
 
-/* PRINT */
+/* Bouton ajouter semaine visible */
+.add-week-btn{display:block;width:100%;background:transparent;border:2px dashed var(--bdr);border-radius:9px;color:var(--blue);font-size:.78rem;font-weight:600;font-family:inherit;padding:10px;cursor:pointer;text-align:center;margin-bottom:10px}
+.add-week-btn:active{background:var(--surf)}
+
 #print-ov{display:none;position:fixed;inset:0;z-index:3500;background:#fff;overflow-y:auto}
 #print-ov.show{display:block}
 .ps-bar{display:flex;justify-content:space-between;align-items:center;background:#111;padding:10px 15px;position:sticky;top:0;z-index:10}
@@ -256,42 +246,30 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .pfr.net .pk{color:#16a34a;font-weight:700}.pfr.net .pv{color:#16a34a;font-size:.9rem}
 .pft{border-top:1px solid #ddd;margin:6px 0}
 .pftr{font-size:.68rem;color:#999;text-align:right;margin-top:6px}
-@media print{
-  body>*:not(#print-ov){display:none!important}
-  #print-ov{display:block!important;position:static!important}
-  .ps-bar{display:none!important}
-  @page{size:A4 landscape;margin:10mm}
-}
+@media print{body>*:not(#print-ov){display:none!important}#print-ov{display:block!important;position:static!important}.ps-bar{display:none!important}@page{size:A4 landscape;margin:10mm}}
 
-/* TOAST */
 #toast{position:fixed;bottom:max(18px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%) translateY(70px);background:var(--surf2);border:1px solid var(--bdr2);border-radius:20px;padding:7px 17px;font-size:.72rem;color:var(--green);pointer-events:none;transition:transform .3s cubic-bezier(.34,1.56,.64,1);z-index:9999;white-space:nowrap}
 #toast.show{transform:translateX(-50%) translateY(0)}
 </style>
 </head>
 <body>
 
-<!-- LOADING -->
-<div id="loading">
-  <div class="ld-logo">Recettes<em> Pro</em></div>
-  <div class="ld-spin"></div>
-</div>
+<div id="loading"><div class="ld-logo">Recettes<em> Pro</em></div><div class="ld-sub">Chargement…</div><div class="ld-spin"></div></div>
 
-<!-- SETUP SCREEN -->
 <div id="setup-screen">
   <div class="setup-logo">Recettes<em> Pro</em></div>
   <div class="setup-title">Créer votre code secret</div>
-  <div class="setup-desc">Choisissez un code secret que vous deux connaissez. Il protège toutes vos données. Minimum 4 caractères.</div>
+  <div class="setup-desc">Choisissez un code que vous deux connaissez. Il protège vos données. Minimum 4 caractères.</div>
   <input class="setup-inp" id="setupInp" type="password" placeholder="votre code" maxlength="30" autocomplete="new-password">
   <button class="setup-btn" id="setupBtn">Créer le code</button>
   <div class="setup-err" id="setupErr"></div>
   <div class="setup-hint">Sur l'autre téléphone, entrez exactement le même code pour accéder aux mêmes données.</div>
 </div>
 
-<!-- LOCK SCREEN -->
 <div id="lock-screen">
   <div class="lock-logo">Recettes<em> Pro</em></div>
   <div class="lock-sub">Accès privé</div>
-  <div class="lock-desc">Entrez votre code secret pour accéder à vos recettes</div>
+  <div class="lock-desc">Entrez votre code secret</div>
   <div class="lock-inp-wrap">
     <input class="lock-inp" id="lockInp" type="password" placeholder="code secret" maxlength="30" autocomplete="current-password">
     <button class="lock-eye" id="eyeBtn">👁</button>
@@ -300,18 +278,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   <div class="lock-msg" id="lockMsg"></div>
 </div>
 
-<!-- SYNC BAR -->
-<div id="sync-bar"><div class="sync-dot"></div><span id="syncText">Synchronisation…</span></div>
+<div id="sync-bar"><div class="sync-dot"></div><span id="syncText"></span></div>
 
-<!-- APP -->
 <div id="app" style="display:none">
   <div id="topbar">
     <div class="tb-row">
       <div id="tbL"><div class="tb-logo">Recettes<em> Pro</em></div></div>
       <div class="tb-center" id="tbC"></div>
-      <div class="tb-right" id="tbR">
-        <button class="ib" id="lockBtnG">🔒</button>
-      </div>
+      <div class="tb-right" id="tbR"><button class="ib" id="lockBtnG">🔒</button></div>
     </div>
     <div class="tab-bar" id="tabBar" style="display:none"></div>
   </div>
@@ -345,7 +319,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   </div>
 </div>
 
-<!-- MODAL biz -->
 <div class="modal-ov" id="bizModal">
   <div class="modal-box">
     <div class="modal-title" id="mTitle">Nouveau commerce</div>
@@ -358,11 +331,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   </div>
 </div>
 
-<!-- MODAL week -->
 <div class="modal-ov" id="weekModal">
   <div class="modal-box">
     <div class="modal-title">Ajouter une semaine</div>
-    <input class="modal-inp" id="wkNumInp" type="number" placeholder="Numéro de semaine (ex: 12)" min="1" max="99">
+    <input class="modal-inp" id="wkNumInp" type="number" placeholder="Numéro de semaine (ex: 17)" min="1" max="99">
     <input class="modal-inp" id="wkYearInp" type="number" placeholder="Année (ex: 2025)" min="2020" max="2099">
     <input class="modal-inp" id="wkCityInp" type="text" placeholder="Ville (optionnel)" maxlength="40" autocomplete="off">
     <div class="modal-row">
@@ -372,10 +344,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   </div>
 </div>
 
-<!-- PRINT -->
 <div id="print-ov">
-  <div class="ps-bar">
-    <span>Aperçu impression</span>
+  <div class="ps-bar"><span>Aperçu impression</span>
     <div style="display:flex;gap:7px">
       <button class="ps-pb" onclick="window.print()">🖨 Imprimer</button>
       <button class="ps-cb" id="closePrint">✕ Fermer</button>
@@ -387,6 +357,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 <div id="toast">✓ Sauvegardé</div>
 
 <script>
+// ═══════════════════════════════════
+// CONFIG
+// ═══════════════════════════════════
 const SUPA_URL='https://pnnboagofaoesvweyzcl.supabase.co';
 const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBubmJvYWdvZmFvZXN2d2V5emNsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYzNTE5NDcsImV4cCI6MjA5MTkyNzk0N30.cqVC-quyZXN5jM0Kl3ZZW-Xu_dl1Szau0ltXplAP2a4';
 
@@ -395,86 +368,129 @@ const EMOJIS=['🏪','🍞','✂️','🎯','🎪','🍕','☕','🛒','🎠','�
 const FEES_RATE=0.33;
 const MONTHS_FR=['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
 
-let curBiz=null,curWIdx=0,toastTimer=null,cityTimer=null,saveDebounce=null,pollInterval=null;
-let editBizId=null,selEmoji='🏪',isUnlocked=false;
+// ═══════════════════════════════════
+// STATE
+// ═══════════════════════════════════
+let curBiz=null,curWIdx=0,isUnlocked=false,dataRowId=null;
+let editBizId=null,selEmoji='🏪';
+let toastT=null,cityT=null,saveT=null,pollT=null;
 let appData={bizList:[],resetHistory:[]};
 
+// ═══════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════
 const $=id=>document.getElementById(id);
 const fmt=v=>v===0?'0,00 €':v.toLocaleString('fr-FR',{minimumFractionDigits:2,maximumFractionDigits:2})+' €';
 const parseA=s=>{const v=parseFloat(String(s||'').replace(',','.'));return isNaN(v)?0:v;};
 const fmtDate=r=>{let v=r.replace(/\D/g,'');if(v.length>=3)v=v.slice(0,2)+'/'+v.slice(2,4);return v;};
 function todayI(){const d=new Date().getDay();return d===0?6:d-1;}
-function showToast(m='✓ Sauvegardé'){$('toast').textContent=m;$('toast').classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').classList.remove('show'),1700);}
+function showToast(m='✓ Sauvegardé'){$('toast').textContent=m;$('toast').classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>$('toast').classList.remove('show'),1800);}
 function setPage(n){document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id==='page-'+n));}
 function computeTotals(days){let tCB=0,tCash=0;const dt=days.map(d=>{const cb=parseA(d.cb),cash=parseA(d.cash);tCB+=cb;tCash+=cash;return{cb,cash,total:cb+cash};});return{dt,tCB,tCash,grand:tCB+tCash};}
 function getWeekMonth(w,y){return new Date(y,0,1+(w-1)*7).getMonth();}
 function getCurWY(){const n=new Date(),d1=new Date(n.getFullYear(),0,1);return{year:n.getFullYear(),week:Math.ceil(((n-d1)/86400000+d1.getDay()+1)/7)};}
 function emptyWeek(num,year,city=''){return{id:'w'+Date.now()+'_'+Math.random().toString(36).slice(2),num,year,city,days:DAYS.map(()=>({date:'',cb:'',cash:''})),fees:{place:'',courant:''}};}
 
-// SECRET — stored as hash locally, used as Supabase row key
-function hashStr(s){let h=0xABCD1234;const str=s+'rp_xg_2025_salt';for(let i=0;i<str.length;i++){h=Math.imul(h^str.charCodeAt(i),0x9e3779b9);h^=h>>>16;}return(h>>>0).toString(16).padStart(8,'0');}
-const getLocalHash=()=>localStorage.getItem('rp_hash');
-const setLocalHash=s=>localStorage.setItem('rp_hash',hashStr(s));
+// ═══════════════════════════════════
+// HASH
+// ═══════════════════════════════════
+function hashStr(s){let h=0xABCD1234;const str=s+'rp_xg_2025_private';for(let i=0;i<str.length;i++){h=Math.imul(h^str.charCodeAt(i),0x9e3779b9);h^=h>>>16;}return(h>>>0).toString(16).padStart(8,'0');}
+const getLocalHash=()=>localStorage.getItem('rp_h2');
+const setLocalHash=s=>localStorage.setItem('rp_h2',hashStr(s));
 const checkSecret=s=>getLocalHash()===hashStr(s);
-// The hash is also used as the Supabase row ID so each "family" has their own isolated data
-let dataRowId=null;
 
-// SUPABASE
-async function supaFetch(path,method='GET',body=null){
-  const opts={method,headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':method==='POST'?'return=representation':'return=minimal'}};
-  if(body)opts.body=JSON.stringify(body);
-  const res=await fetch(SUPA_URL+path,opts);
-  if(!res.ok){const t=await res.text();throw new Error('HTTP '+res.status+' '+t);}
-  const txt=await res.text();return txt?JSON.parse(txt):null;
+// ═══════════════════════════════════
+// SUPABASE — corrigé avec UPSERT propre
+// ═══════════════════════════════════
+async function supaGet(){
+  const res=await fetch(`${SUPA_URL}/rest/v1/recettes_data?id=eq.${dataRowId}&select=data`,{
+    headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}
+  });
+  if(!res.ok)throw new Error('GET '+res.status);
+  const rows=await res.json();
+  return(rows&&rows.length)?rows[0].data:null;
+}
+
+async function supaUpsert(data){
+  // DELETE puis INSERT pour éviter les conflits
+  const res=await fetch(`${SUPA_URL}/rest/v1/recettes_data`,{
+    method:'POST',
+    headers:{
+      'apikey':SUPA_KEY,
+      'Authorization':'Bearer '+SUPA_KEY,
+      'Content-Type':'application/json',
+      'Prefer':'resolution=merge-duplicates'
+    },
+    body:JSON.stringify({id:dataRowId,data:data,updated_at:new Date().toISOString()})
+  });
+  if(!res.ok){const t=await res.text();throw new Error('UPSERT '+res.status+' '+t);}
 }
 
 async function loadFromCloud(){
-  if(!dataRowId)return false;
-  try{
-    const rows=await supaFetch('/rest/v1/recettes_data?id=eq.'+dataRowId+'&select=data');
-    if(rows&&rows.length&&rows[0].data&&Object.keys(rows[0].data).length){
-      appData=rows[0].data;
-      if(!appData.bizList)appData.bizList=[];
-      if(!appData.resetHistory)appData.resetHistory=[];
-    }
-    return true;
-  }catch(e){console.error('load',e);return false;}
-}
-
-async function saveToCloud(){
   if(!dataRowId)return;
-  showSync('syncing');
   try{
-    // Upsert
-    await supaFetch('/rest/v1/recettes_data','POST',{id:dataRowId,data:appData,updated_at:new Date().toISOString()});
-    showSync('ok');setTimeout(hideSync,1500);
-  }catch(e){
-    console.error('save',e);showSync('err');setTimeout(hideSync,3000);
-  }
+    const data=await supaGet();
+    if(data&&typeof data==='object'){
+      appData=data;
+      if(!Array.isArray(appData.bizList))appData.bizList=[];
+      if(!Array.isArray(appData.resetHistory))appData.resetHistory=[];
+    }
+  }catch(e){console.error('Load error:',e);}
 }
 
-function scheduleSave(){clearTimeout(saveDebounce);saveDebounce=setTimeout(saveToCloud,800);}
+function scheduleSave(){
+  clearTimeout(saveT);
+  saveT=setTimeout(async()=>{
+    showSync('syncing');
+    try{
+      await supaUpsert(appData);
+      showSync('ok');setTimeout(hideSync,2000);
+    }catch(e){
+      console.error('Save error:',e);
+      showSync('err');setTimeout(hideSync,4000);
+    }
+  },600);
+}
 
-function showSync(type){const b=$('sync-bar');b.className='show '+type;$('syncText').textContent={syncing:'Synchronisation…',ok:'✓ Synchronisé',err:'⚠ Erreur réseau'}[type];}
+function showSync(t){const b=$('sync-bar');b.className='show '+t;$('syncText').textContent={syncing:'Synchronisation…',ok:'✓ Synchronisé',err:'⚠ Erreur de sauvegarde'}[t];}
 function hideSync(){$('sync-bar').className='';}
 
 function startPolling(){
-  stopPolling();
-  pollInterval=setInterval(async()=>{
-    if(!isUnlocked)return;
-    const ok=await loadFromCloud();
-    if(ok){if(curBiz)renderWeek();else renderHome();}
+  clearInterval(pollT);
+  pollT=setInterval(async()=>{
+    if(!isUnlocked||!dataRowId)return;
+    try{
+      const data=await supaGet();
+      if(data&&typeof data==='object'){
+        appData=data;
+        if(!Array.isArray(appData.bizList))appData.bizList=[];
+        if(!Array.isArray(appData.resetHistory))appData.resetHistory=[];
+        if(curBiz)renderWeek();else renderHome();
+      }
+    }catch(e){}
   },30000);
 }
-function stopPolling(){clearInterval(pollInterval);}
 
-// LOCK
+// ═══════════════════════════════════
+// DATA HELPERS
+// ═══════════════════════════════════
+function getBizList(){return appData.bizList||[];}
+function saveBizList(l){appData.bizList=l;scheduleSave();}
+function getBiz(id){return getBizList().find(b=>b.id===id)||null;}
+function saveBiz(biz){const l=getBizList();const i=l.findIndex(b=>b.id===biz.id);if(i>=0)l[i]=biz;else l.push(biz);saveBizList(l);}
+function getResetHist(){return appData.resetHistory||[];}
+function addResetHist(e){const h=getResetHist();h.unshift(e);if(h.length>100)h.pop();appData.resetHistory=h;scheduleSave();}
+function clearResetHist(){appData.resetHistory=[];scheduleSave();}
+
+// ═══════════════════════════════════
+// LOCK / UNLOCK
+// ═══════════════════════════════════
 function showLock(){
-  isUnlocked=false;$('lockInp').value='';$('lockMsg').textContent='';$('lockInp').classList.remove('err');
+  isUnlocked=false;clearInterval(pollT);
+  $('lockInp').value='';$('lockMsg').textContent='';$('lockInp').classList.remove('err');
   $('app').style.display='none';$('lock-screen').style.display='flex';
-  stopPolling();
 }
-
+$('lockBtnG').addEventListener('click',showLock);
 $('lockSubmitBtn').addEventListener('click',tryUnlock);
 $('lockInp').addEventListener('keydown',e=>{if(e.key==='Enter')tryUnlock();});
 $('eyeBtn').addEventListener('click',()=>{const i=$('lockInp');i.type=i.type==='password'?'text':'password';});
@@ -487,40 +503,34 @@ async function tryUnlock(){
     setTimeout(()=>{$('lockInp').classList.remove('err');$('lockMsg').textContent='';},1200);
     return;
   }
-  // Load data
+  dataRowId=getLocalHash();
   $('lock-screen').style.display='none';
   $('loading').style.display='flex';
+  $('loading').querySelector('.ld-sub').textContent='Chargement des données…';
   await loadFromCloud();
   $('loading').style.display='none';
   isUnlocked=true;
   $('app').style.display='flex';
-  renderHome();startPolling();
+  renderHome();
+  startPolling();
 }
 
-$('lockBtnG').addEventListener('click',showLock);
-
+// ═══════════════════════════════════
 // SETUP
+// ═══════════════════════════════════
 $('setupBtn').addEventListener('click',()=>{
   const val=$('setupInp').value.trim();
-  if(!val||val.length<4){$('setupErr').textContent='Code trop court (minimum 4 caractères)';return;}
+  if(!val||val.length<4){$('setupErr').textContent='Minimum 4 caractères';return;}
   setLocalHash(val);
-  dataRowId=hashStr(val);
   $('setup-screen').style.display='none';
   $('lock-screen').style.display='flex';
   showToast('✓ Code créé !');
 });
 $('setupInp').addEventListener('keydown',e=>{if(e.key==='Enter')$('setupBtn').click();});
 
-// DATA
-function getBizList(){return appData.bizList||[];}
-function saveBizList(l){appData.bizList=l;scheduleSave();}
-function getBiz(id){return getBizList().find(b=>b.id===id)||null;}
-function saveBiz(biz){const list=getBizList();const i=list.findIndex(b=>b.id===biz.id);if(i>=0)list[i]=biz;else list.push(biz);saveBizList(list);}
-function getResetHist(){return appData.resetHistory||[];}
-function addResetHist(e){const h=getResetHist();h.unshift(e);if(h.length>100)h.pop();appData.resetHistory=h;scheduleSave();}
-function clearResetHist(){appData.resetHistory=[];scheduleSave();}
-
+// ═══════════════════════════════════
 // HOME
+// ═══════════════════════════════════
 function renderHome(){
   $('tbL').innerHTML='<div class="tb-logo">Recettes<em style="color:var(--blue)"> Pro</em></div>';
   $('tbC').innerHTML='';
@@ -547,6 +557,9 @@ function renderHome(){
   $('addBizBtn').addEventListener('click',()=>openBizModal(null));
 }
 
+// ═══════════════════════════════════
+// MODALS
+// ═══════════════════════════════════
 function openBizModal(id){
   editBizId=id;const biz=id?getBiz(id):null;selEmoji=biz?.emoji||'🏪';
   $('mTitle').textContent=id?'Modifier':'Nouveau commerce';$('mSave').textContent=id?'Enregistrer':'Ajouter';$('bizInp').value=biz?.name||'';
@@ -567,19 +580,35 @@ $('mSave').addEventListener('click',()=>{
   showToast(editBizId?'✓ Modifié':'✓ Commerce ajouté');
 });
 
+function openWeekModal(){
+  const biz=getBiz(curBiz);if(!biz)return;
+  const {week,year}=getCurWY();
+  $('wkNumInp').value=week;$('wkYearInp').value=year;$('wkCityInp').value=biz.city||'';
+  $('weekModal').classList.add('show');
+}
 $('wkCancel').addEventListener('click',()=>$('weekModal').classList.remove('show'));
 $('weekModal').addEventListener('click',e=>{if(e.target===$('weekModal'))$('weekModal').classList.remove('show');});
 $('wkSave').addEventListener('click',()=>{
   const num=parseInt($('wkNumInp').value),year=parseInt($('wkYearInp').value),city=$('wkCityInp').value.trim();
-  if(!num||!year||num<1||num>99)return;
+  if(!num||!year||num<1||num>99){showToast('⚠ Numéro de semaine invalide');return;}
   const biz=getBiz(curBiz);if(!biz)return;if(!biz.weeks)biz.weeks=[];
   const exists=biz.weeks.find(w=>w.num===num&&w.year===year);
-  if(exists){curWIdx=biz.weeks.indexOf(exists);$('weekModal').classList.remove('show');updWBadge();renderWeek();switchTab('week');return;}
-  const newW=emptyWeek(num,year,city);biz.weeks.push(newW);biz.weeks.sort((a,b)=>b.year-a.year||b.num-a.num);
-  curWIdx=biz.weeks.findIndex(w=>w.id===newW.id);saveBiz(biz);
-  $('weekModal').classList.remove('show');updWBadge();renderWeek();switchTab('week');showToast('✓ Semaine ajoutée');
+  if(exists){
+    curWIdx=biz.weeks.findIndex(w=>w.id===exists.id);
+    $('weekModal').classList.remove('show');updWBadge();renderWeek();switchTab('week');
+    showToast('Semaine '+num+' ouverte');return;
+  }
+  const newW=emptyWeek(num,year,city||biz.city||'');
+  biz.weeks.push(newW);
+  biz.weeks.sort((a,b)=>b.year-a.year||b.num-a.num);
+  curWIdx=biz.weeks.findIndex(w=>w.id===newW.id);
+  saveBiz(biz);$('weekModal').classList.remove('show');updWBadge();renderWeek();switchTab('week');
+  showToast('✓ Semaine '+num+' ajoutée');
 });
 
+// ═══════════════════════════════════
+// OPEN BUSINESS
+// ═══════════════════════════════════
 function openBiz(id){
   curBiz=id;let biz=getBiz(id);if(!biz)return;
   if(!biz.weeks||!biz.weeks.length){const {year,week}=getCurWY();biz.weeks=[emptyWeek(week,year,biz.city||'')];saveBiz(biz);}
@@ -605,32 +634,55 @@ function switchTab(name){
 }
 
 $('cityInp').addEventListener('input',e=>{
-  clearTimeout(cityTimer);cityTimer=setTimeout(()=>{
+  clearTimeout(cityT);cityT=setTimeout(()=>{
     const biz=getBiz(curBiz);if(!biz)return;biz.city=e.target.value.trim();
     if(biz.weeks&&biz.weeks[curWIdx])biz.weeks[curWIdx].city=biz.city;
     saveBiz(biz);$('cityOk').textContent='✓';setTimeout(()=>$('cityOk').textContent='',1200);updWBadge();
   },500);
 });
 
-function updWBadge(){const biz=getBiz(curBiz);if(!biz||!biz.weeks||!biz.weeks.length)return;const w=biz.weeks[curWIdx];$('wNum').textContent='S'+w.num;$('wYear').textContent=w.year;$('wCity').textContent=w.city||biz.city||'';}
-$('prevW').addEventListener('click',()=>{const biz=getBiz(curBiz);if(!biz||!biz.weeks)return;if(curWIdx<biz.weeks.length-1){curWIdx++;updWBadge();renderWeek();}else showToast('Première semaine');});
-$('nextW').addEventListener('click',()=>{if(curWIdx>0){curWIdx--;updWBadge();renderWeek();}else showToast('Dernière semaine');});
-$('weekBadge').addEventListener('click',()=>{const biz=getBiz(curBiz);if(!biz)return;$('wkNumInp').value='';$('wkYearInp').value=new Date().getFullYear();$('wkCityInp').value=biz.city||'';$('weekModal').classList.add('show');});
+// ═══════════════════════════════════
+// WEEK NAV
+// ═══════════════════════════════════
+function updWBadge(){
+  const biz=getBiz(curBiz);if(!biz||!biz.weeks||!biz.weeks.length)return;
+  const w=biz.weeks[curWIdx];
+  $('wNum').textContent='S'+w.num;$('wYear').textContent=w.year;$('wCity').textContent=w.city||biz.city||'';
+}
+$('prevW').addEventListener('click',()=>{
+  const biz=getBiz(curBiz);if(!biz||!biz.weeks)return;
+  if(curWIdx<biz.weeks.length-1){curWIdx++;updWBadge();renderWeek();}else showToast('Première semaine');
+});
+$('nextW').addEventListener('click',()=>{
+  if(curWIdx>0){curWIdx--;updWBadge();renderWeek();}else showToast('Dernière semaine');
+});
+// Clic sur badge = ajouter semaine
+$('weekBadge').addEventListener('click',openWeekModal);
 $('printBtn').addEventListener('click',()=>{buildPrint();$('print-ov').classList.add('show');});
 $('closePrint').addEventListener('click',()=>$('print-ov').classList.remove('show'));
 
+// ═══════════════════════════════════
+// WEEK VIEW
+// ═══════════════════════════════════
 function getCurWeek(){const biz=getBiz(curBiz);if(!biz||!biz.weeks||!biz.weeks[curWIdx])return null;return biz.weeks[curWIdx];}
-function saveCurrentWeek(days,fees){const biz=getBiz(curBiz);if(!biz||!biz.weeks)return;if(days!==undefined)biz.weeks[curWIdx].days=days;if(fees!==undefined)biz.weeks[curWIdx].fees=fees;saveBiz(biz);showToast();}
+
+function saveCurrentWeek(days,fees){
+  const biz=getBiz(curBiz);if(!biz||!biz.weeks)return;
+  if(days!==undefined)biz.weeks[curWIdx].days=days;
+  if(fees!==undefined)biz.weeks[curWIdx].fees=fees;
+  saveBiz(biz);showToast();
+}
 
 function renderWeek(){
   const wk=getCurWeek();if(!wk)return;
-  const {dt,tCB,tCash,grand}=computeTotals(wk.days);const ti=todayI();const grid=$('weekGrid');grid.innerHTML='';
+  const {dt,tCB,tCash,grand}=computeTotals(wk.days);const ti=todayI();
+  const grid=$('weekGrid');grid.innerHTML='';
   DAYS.forEach((name,d)=>{
     const t=dt[d];const card=document.createElement('div');card.className='day-card'+(d===ti?' today':'');
-    card.innerHTML=`<div class="card-head"><div class="cdn">${name}</div><input class="date-inp" data-d="${d}" type="text" placeholder="JJ/MM" maxlength="5" value="${wk.days[d].date}" autocomplete="off"></div>
+    card.innerHTML=`<div class="card-head"><div class="cdn">${name}</div><input class="date-inp" data-d="${d}" type="text" placeholder="JJ/MM" maxlength="5" value="${wk.days[d].date||''}" autocomplete="off"></div>
       <div class="card-body">
-        <div class="fg"><div class="fl cb">CB</div><input class="ai cb" data-d="${d}" data-f="cb" type="text" inputmode="decimal" placeholder="0,00" value="${wk.days[d].cb}" autocomplete="off"></div>
-        <div class="fg"><div class="fl cash">Espèces</div><input class="ai cash" data-d="${d}" data-f="cash" type="text" inputmode="decimal" placeholder="0,00" value="${wk.days[d].cash}" autocomplete="off"></div>
+        <div class="fg"><div class="fl cb">CB</div><input class="ai cb" data-d="${d}" data-f="cb" type="text" inputmode="decimal" placeholder="0,00" value="${wk.days[d].cb||''}" autocomplete="off"></div>
+        <div class="fg"><div class="fl cash">Espèces</div><input class="ai cash" data-d="${d}" data-f="cash" type="text" inputmode="decimal" placeholder="0,00" value="${wk.days[d].cash||''}" autocomplete="off"></div>
         <div class="fg"><div class="fl tot">Total</div><div class="tbox ${t.total===0?'z':''}" id="tot${d}">${fmt(t.total)}</div></div>
       </div>`;
     grid.appendChild(card);
@@ -641,13 +693,20 @@ function renderWeek(){
     <div class="fg"><div class="fl cash">Total Espèces</div><div class="tbox ${tCash===0?'z':''}" id="wcash">${fmt(tCash)}</div></div>
     <div class="fg"><div class="fl tot">Total Brut</div><div class="gbox ${grand===0?'z':''}" id="wgrand">${fmt(grand)}</div></div></div>`;
   grid.appendChild(tc);
+
   $('strip').innerHTML=`<div class="sc cb"><div class="sl">CB</div><div class="sv" id="sCB">${fmt(tCB)}</div></div><div class="sc cash"><div class="sl">Espèces</div><div class="sv" id="sCash">${fmt(tCash)}</div></div><div class="sc tot"><div class="sl">Total Brut</div><div class="sv" id="sGrand">${fmt(grand)}</div></div>`;
   renderFees(grand,wk.fees||{place:'',courant:''});
-  const cards=grid.querySelectorAll('.day-card');if(cards[ti])setTimeout(()=>cards[ti].scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'}),80);
+
+  const cards=grid.querySelectorAll('.day-card');
+  if(cards[ti])setTimeout(()=>cards[ti].scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'}),80);
+
   grid.addEventListener('input',e=>{
     const inp=e.target;const wk2=getCurWeek();if(!wk2)return;
     if(inp.classList.contains('date-inp')){inp.value=fmtDate(inp.value);wk2.days[+inp.dataset.d].date=inp.value;saveCurrentWeek(wk2.days);return;}
-    if(inp.classList.contains('ai')){wk2.days[+inp.dataset.d][inp.dataset.f]=inp.value;saveCurrentWeek(wk2.days);const {dt:dt2,tCB:c,tCash:ca,grand:g}=computeTotals(wk2.days);recomp(dt2,c,ca,g);renderFees(g,wk2.fees||{});}
+    if(inp.classList.contains('ai')){
+      wk2.days[+inp.dataset.d][inp.dataset.f]=inp.value;saveCurrentWeek(wk2.days);
+      const {dt:dt2,tCB:c,tCash:ca,grand:g}=computeTotals(wk2.days);recomp(dt2,c,ca,g);renderFees(g,wk2.fees||{});
+    }
   });
 }
 
@@ -655,7 +714,8 @@ function recomp(dt,tCB,tCash,grand){
   dt.forEach((t,d)=>{const el=$('tot'+d);if(el){el.textContent=fmt(t.total);el.className='tbox'+(t.total===0?' z':'');}});
   const s=(id,v,c)=>{const el=$(id);if(el){el.textContent=fmt(v);el.className=c+(v===0?' z':'');}};
   s('wcb',tCB,'tbox');s('wcash',tCash,'tbox');s('wgrand',grand,'gbox');
-  const a=$('sCB'),b=$('sCash'),c=$('sGrand');if(a)a.textContent=fmt(tCB);if(b)b.textContent=fmt(tCash);if(c)c.textContent=fmt(grand);
+  const a=$('sCB'),b=$('sCash'),c=$('sGrand');
+  if(a)a.textContent=fmt(tCB);if(b)b.textContent=fmt(tCash);if(c)c.textContent=fmt(grand);
 }
 
 function renderFees(grand,fees){
@@ -666,56 +726,120 @@ function renderFees(grand,fees){
     <div class="fee-row"><div class="fee-label">Frais de place</div><input class="fee-inp" id="feePlace" type="text" inputmode="decimal" placeholder="0,00" value="${fees.place||''}"></div>
     <div class="fee-row"><div class="fee-label">Frais de courant</div><input class="fee-inp" id="feeCourant" type="text" inputmode="decimal" placeholder="0,00" value="${fees.courant||''}"></div>
     <hr class="fee-divider"><div class="net-row"><div class="net-label">Bénéfice net</div><div class="net-val${net<0?' neg':''}" id="netVal">${fmt(net)}</div></div>`;
-  ['feePlace','feeCourant'].forEach(id=>{$(id).addEventListener('input',()=>{const wk=getCurWeek();if(!wk)return;wk.fees={place:$('feePlace').value,courant:$('feeCourant').value};saveCurrentWeek(undefined,wk.fees);const p2=parseA($('feePlace').value),c2=parseA($('feeCourant').value);const {grand:g2}=computeTotals(wk.days);const net2=g2-g2*FEES_RATE-p2-c2;const nv=$('netVal');if(nv){nv.textContent=fmt(net2);nv.className='net-val'+(net2<0?' neg':'');}});});
+  ['feePlace','feeCourant'].forEach(id=>{
+    $(id).addEventListener('input',()=>{
+      const wk=getCurWeek();if(!wk)return;
+      wk.fees={place:$('feePlace').value,courant:$('feeCourant').value};saveCurrentWeek(undefined,wk.fees);
+      const p2=parseA($('feePlace').value),c2=parseA($('feeCourant').value);
+      const {grand:g2}=computeTotals(wk.days);const net2=g2-g2*FEES_RATE-p2-c2;
+      const nv=$('netVal');if(nv){nv.textContent=fmt(net2);nv.className='net-val'+(net2<0?' neg':'');}
+    });
+  });
 }
 
 $('resetBtn').addEventListener('click',()=>{
   const biz=getBiz(curBiz);const wk=getCurWeek();if(!biz||!wk)return;
-  if(!confirm(`Réinitialiser S${wk.num} — ${wk.year} ?`))return;
+  if(!confirm(`Réinitialiser la semaine S${wk.num} — ${wk.year} ?\nLes données seront archivées.`))return;
   const {tCB,tCash,grand}=computeTotals(wk.days);
   addResetHist({date:new Date().toLocaleDateString('fr-FR',{day:'2-digit',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit'}),bizName:biz.name,bizEmoji:biz.emoji||'🏪',week:wk.num,year:wk.year,city:wk.city||biz.city||'',tCB,tCash,grand,fees:wk.fees||{}});
-  wk.days=DAYS.map(()=>({date:'',cb:'',cash:''}));wk.fees={place:'',courant:''};saveBiz(biz);renderWeek();showToast('↺ Réinitialisée');
+  wk.days=DAYS.map(()=>({date:'',cb:'',cash:''}));wk.fees={place:'',courant:''};
+  saveBiz(biz);renderWeek();showToast('↺ Semaine réinitialisée');
 });
 
+// ═══════════════════════════════════
+// HISTORY — avec bouton ajouter semaine
+// ═══════════════════════════════════
 function renderHistory(){
-  const biz=getBiz(curBiz);if(!biz||!biz.weeks||!biz.weeks.length){$('histContent').innerHTML='<div class="empty"><div class="empty-i">📋</div>Aucune semaine.</div>';return;}
-  const sorted=[...biz.weeks].sort((a,b)=>b.year-a.year||b.num-a.num);let h='<div class="sec-title">Toutes les semaines</div>';
+  const biz=getBiz(curBiz);
+  if(!biz||!biz.weeks||!biz.weeks.length){$('histContent').innerHTML='<div class="empty"><div class="empty-i">📋</div>Aucune semaine.</div>';return;}
+  const sorted=[...biz.weeks].sort((a,b)=>b.year-a.year||b.num-a.num);
+  let h='<button class="add-week-btn" id="addWeekBtn">＋ Ajouter une semaine</button>';
+  h+='<div class="sec-title">Toutes les semaines</div>';
   sorted.forEach(wk=>{
-    const {tCB,tCash,grand}=computeTotals(wk.days);const net=grand-grand*FEES_RATE-parseA(wk.fees?.place)-parseA(wk.fees?.courant);const isCur=biz.weeks[curWIdx]?.id===wk.id;const city=wk.city||biz.city||'';
-    h+=`<div class="hr${isCur?' cur':''}" data-wid="${wk.id}"><div class="hl"><div class="hw">Semaine ${wk.num} — ${wk.year}${isCur?' · En cours':''}</div>${city?`<div class="hcity">📍 ${city}</div>`:''}<div class="hsub">CB ${fmt(tCB)} · Espèces ${fmt(tCash)}</div><div class="hnet">Net : ${fmt(net)}</div></div><div class="hrr"><div class="htot">${fmt(grand)}</div><button class="dbtn del-week-btn" data-wid="${wk.id}">Suppr.</button></div></div>`;
+    const {tCB,tCash,grand}=computeTotals(wk.days);
+    const net=grand-grand*FEES_RATE-parseA(wk.fees?.place)-parseA(wk.fees?.courant);
+    const isCur=biz.weeks[curWIdx]?.id===wk.id;const city=wk.city||biz.city||'';
+    h+=`<div class="hr${isCur?' cur':''}" data-wid="${wk.id}">
+      <div class="hl">
+        <div class="hw">Semaine ${wk.num} — ${wk.year}${isCur?' · En cours':''}</div>
+        ${city?`<div class="hcity">📍 ${city}</div>`:''}
+        <div class="hsub">CB ${fmt(tCB)} · Espèces ${fmt(tCash)}</div>
+        <div class="hnet">Net : ${fmt(net)}</div>
+      </div>
+      <div class="hrr"><div class="htot">${fmt(grand)}</div><button class="dbtn del-week-btn" data-wid="${wk.id}">Suppr.</button></div>
+    </div>`;
   });
   $('histContent').innerHTML=h;
+  $('addWeekBtn').addEventListener('click',openWeekModal);
   $('histContent').addEventListener('click',e=>{
     const del=e.target.closest('.del-week-btn');
-    if(del){e.stopPropagation();const b2=getBiz(curBiz);if(!b2)return;if(b2.weeks.length<=1){showToast('❌ Seule semaine');return;}if(!confirm('Supprimer ?'))return;b2.weeks=b2.weeks.filter(w=>w.id!==del.dataset.wid);curWIdx=0;saveBiz(b2);updWBadge();renderHistory();showToast('✓ Supprimée');return;}
-    const row=e.target.closest('.hr');if(row){const b2=getBiz(curBiz);if(!b2)return;const idx=b2.weeks.findIndex(w=>w.id===row.dataset.wid);if(idx>=0){curWIdx=idx;updWBadge();switchTab('week');}}
-  },{once:true});
+    if(del){
+      e.stopPropagation();const b2=getBiz(curBiz);if(!b2)return;
+      if(b2.weeks.length<=1){showToast('❌ Impossible — seule semaine');return;}
+      if(!confirm('Supprimer cette semaine ?'))return;
+      b2.weeks=b2.weeks.filter(w=>w.id!==del.dataset.wid);
+      if(curWIdx>=b2.weeks.length)curWIdx=0;
+      saveBiz(b2);updWBadge();renderHistory();showToast('✓ Semaine supprimée');return;
+    }
+    const row=e.target.closest('.hr');
+    if(row&&!row.querySelector('.del-week-btn')?.contains(e.target)){
+      const b2=getBiz(curBiz);if(!b2)return;
+      const idx=b2.weeks.findIndex(w=>w.id===row.dataset.wid);
+      if(idx>=0){curWIdx=idx;updWBadge();switchTab('week');}
+    }
+  });
 }
 
+// ═══════════════════════════════════
+// MONTHLY
+// ═══════════════════════════════════
 function renderMonthly(){
   const biz=getBiz(curBiz);if(!biz||!biz.weeks||!biz.weeks.length){$('monthlyContent').innerHTML='<div class="empty"><div class="empty-i">📊</div>Aucune donnée.</div>';return;}
   const bym={};biz.weeks.forEach(wk=>{const k=`${wk.year}_${getWeekMonth(wk.num,wk.year)}`;if(!bym[k])bym[k]={year:wk.year,month:getWeekMonth(wk.num,wk.year),weeks:[]};bym[k].weeks.push(wk);});
-  const sorted=Object.values(bym).sort((a,b)=>b.year-a.year||b.month-a.month);let h='<div class="sec-title">Totaux mensuels</div>';
+  const sorted=Object.values(bym).sort((a,b)=>b.year-a.year||b.month-a.month);
+  let h='<div class="sec-title">Totaux mensuels</div>';
   sorted.forEach(({year,month,weeks})=>{
-    let mCB=0,mCash=0,mGrand=0,mPlace=0,mCourant=0;weeks.forEach(wk=>{const {tCB,tCash,grand}=computeTotals(wk.days);mCB+=tCB;mCash+=tCash;mGrand+=grand;mPlace+=parseA(wk.fees?.place);mCourant+=parseA(wk.fees?.courant);});
+    let mCB=0,mCash=0,mGrand=0,mPlace=0,mCourant=0;
+    weeks.forEach(wk=>{const {tCB,tCash,grand}=computeTotals(wk.days);mCB+=tCB;mCash+=tCash;mGrand+=grand;mPlace+=parseA(wk.fees?.place);mCourant+=parseA(wk.fees?.courant);});
     const mProv=mGrand*FEES_RATE,mNet=mGrand-mProv-mPlace-mCourant;
-    h+=`<div class="month-card"><div class="month-head"><div class="month-name">${MONTHS_FR[month]} ${year}</div><div class="month-tot">${fmt(mGrand)}</div></div><div class="month-body"><div class="mrow"><span class="mk">Total CB</span><span class="mv" style="color:var(--blue)">${fmt(mCB)}</span></div><div class="mrow"><span class="mk">Total Espèces</span><span class="mv" style="color:var(--green)">${fmt(mCash)}</span></div><div class="mrow"><span class="mk">Provision 33%</span><span class="mv" style="color:var(--red)">− ${fmt(mProv)}</span></div><div class="mrow"><span class="mk">Frais de place</span><span class="mv" style="color:var(--orange)">− ${fmt(mPlace)}</span></div><div class="mrow"><span class="mk">Frais de courant</span><span class="mv" style="color:var(--orange)">− ${fmt(mCourant)}</span></div><div class="mrow net"><span class="mk">Bénéfice net</span><span class="mv">${fmt(mNet)}</span></div></div></div>`;
+    h+=`<div class="month-card"><div class="month-head"><div class="month-name">${MONTHS_FR[month]} ${year}</div><div class="month-tot">${fmt(mGrand)}</div></div>
+      <div class="month-body">
+        <div class="mrow"><span class="mk">Total CB</span><span class="mv" style="color:var(--blue)">${fmt(mCB)}</span></div>
+        <div class="mrow"><span class="mk">Total Espèces</span><span class="mv" style="color:var(--green)">${fmt(mCash)}</span></div>
+        <div class="mrow"><span class="mk">Provision 33%</span><span class="mv" style="color:var(--red)">− ${fmt(mProv)}</span></div>
+        <div class="mrow"><span class="mk">Frais de place</span><span class="mv" style="color:var(--orange)">− ${fmt(mPlace)}</span></div>
+        <div class="mrow"><span class="mk">Frais de courant</span><span class="mv" style="color:var(--orange)">− ${fmt(mCourant)}</span></div>
+        <div class="mrow net"><span class="mk">Bénéfice net</span><span class="mv">${fmt(mNet)}</span></div>
+      </div></div>`;
   });
   $('monthlyContent').innerHTML=h;
 }
 
+// ═══════════════════════════════════
+// RESETS
+// ═══════════════════════════════════
 function renderResets(){
   const hist=getResetHist();let h='<div class="sec-title">Historique des réinitialisations</div>';
   if(!hist.length){h+='<div class="empty"><div class="empty-i">🗃</div>Aucun reset archivé.</div>';}
-  else{hist.forEach(r=>{const net=r.grand-r.grand*FEES_RATE-parseA(r.fees?.place)-parseA(r.fees?.courant);h+=`<div class="rh-card"><div class="rh-top"><div><div class="rh-date">Réinitialisé le ${r.date}</div><div class="rh-biz">${r.bizEmoji||'🏪'} ${r.bizName}${r.city?' · 📍'+r.city:''}</div></div></div><div class="rh-week">Semaine ${r.week} — ${r.year}</div><div class="rh-amounts"><div class="rh-a">Brut : <span>${fmt(r.grand)}</span></div><div class="rh-a">CB : <span>${fmt(r.tCB)}</span></div><div class="rh-a">Espèces : <span>${fmt(r.tCash)}</span></div><div class="rh-a">Net : <span style="color:var(--green)">${fmt(net)}</span></div></div></div>`;});
-  h+=`<button class="clear-hist-btn" id="clearHistBtn">🗑 Vider l'historique</button>`;}
+  else{
+    hist.forEach(r=>{const net=r.grand-r.grand*FEES_RATE-parseA(r.fees?.place)-parseA(r.fees?.courant);
+      h+=`<div class="rh-card"><div class="rh-top"><div><div class="rh-date">Réinitialisé le ${r.date}</div><div class="rh-biz">${r.bizEmoji||'🏪'} ${r.bizName}${r.city?' · 📍'+r.city:''}</div></div></div>
+        <div class="rh-week">Semaine ${r.week} — ${r.year}</div>
+        <div class="rh-amounts"><div class="rh-a">Brut : <span>${fmt(r.grand)}</span></div><div class="rh-a">CB : <span>${fmt(r.tCB)}</span></div><div class="rh-a">Espèces : <span>${fmt(r.tCash)}</span></div><div class="rh-a">Net : <span style="color:var(--green)">${fmt(net)}</span></div></div></div>`;
+    });
+    h+=`<button class="clear-hist-btn" id="clearHistBtn">🗑 Vider l'historique</button>`;
+  }
   $('resetsContent').innerHTML=h;
   const clr=$('clearHistBtn');if(clr)clr.addEventListener('click',()=>{if(!confirm('Vider ?'))return;clearResetHist();renderResets();showToast('✓ Vidé');});
 }
 
+// ═══════════════════════════════════
+// PRINT
+// ═══════════════════════════════════
 function buildPrint(){
   const biz=getBiz(curBiz);const wk=getCurWeek();if(!biz||!wk)return;
-  const {dt,tCB,tCash,grand}=computeTotals(wk.days);const city=wk.city||biz.city||'';const printed=new Date().toLocaleDateString('fr-FR',{day:'2-digit',month:'long',year:'numeric'});
+  const {dt,tCB,tCash,grand}=computeTotals(wk.days);const city=wk.city||biz.city||'';
+  const printed=new Date().toLocaleDateString('fr-FR',{day:'2-digit',month:'long',year:'numeric'});
   const prov=grand*FEES_RATE,place=parseA(wk.fees?.place),courant=parseA(wk.fees?.courant),net=grand-prov-place-courant;
   let rows='';DAYS.forEach((name,d)=>{const t=dt[d];rows+=`<tr><td class="td-day">${name}</td><td style="color:#666;font-size:.7rem">${wk.days[d].date||'—'}</td><td class="td-num ${t.cb===0?'td-z':''}">${t.cb>0?fmt(t.cb):'—'}</td><td class="td-num ${t.cash===0?'td-z':''}">${t.cash>0?fmt(t.cash):'—'}</td><td class="td-tot ${t.total===0?'td-z':''}">${t.total>0?fmt(t.total):'—'}</td></tr>`;});
   $('printSheet').innerHTML=`<div class="ph"><div><div class="pt">Recettes<span> Pro</span></div><div class="pb">${biz.emoji||'🏪'} ${biz.name}</div></div><div class="pm"><strong>Semaine ${wk.num} — ${wk.year}</strong><br>${city?`📍 ${city}<br>`:''}Imprimé le ${printed}</div></div>
@@ -725,16 +849,22 @@ function buildPrint(){
     <div style="border-top:1px solid #ddd;padding-top:7px;font-size:.68rem;color:#999;display:flex;justify-content:space-between"><span>${biz.emoji||'🏪'} ${biz.name}</span><span>Semaine ${wk.num} / ${wk.year}</span></div>`;
 }
 
-// Background lock
-document.addEventListener('visibilitychange',()=>{if(document.hidden){clearTimeout(window._bgL);window._bgL=setTimeout(()=>{if(isUnlocked)showLock();},30000);}else clearTimeout(window._bgL);});
+// ═══════════════════════════════════
+// BACKGROUND LOCK
+// ═══════════════════════════════════
+document.addEventListener('visibilitychange',()=>{
+  if(document.hidden){clearTimeout(window._bgL);window._bgL=setTimeout(()=>{if(isUnlocked)showLock();},30000);}
+  else clearTimeout(window._bgL);
+});
 
+// ═══════════════════════════════════
 // INIT
+// ═══════════════════════════════════
 async function init(){
   const hash=getLocalHash();
   if(hash){
-    // Already set up — derive row ID from stored hash
-    dataRowId=hash; // hash IS the row id
-    $('loading').style.display='flex';
+    dataRowId=hash;
+    $('loading').querySelector('.ld-sub').textContent='Chargement…';
     await loadFromCloud();
     $('loading').style.display='none';
     $('lock-screen').style.display='flex';
