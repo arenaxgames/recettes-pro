@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Recettes Pro">
+<meta name="theme-color" content="#0a0b0e">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>Recettes Pro</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#0a0b0e;--surf:#111318;--surf2:#181c24;--surf3:#1f2430;
+  --bdr:#242938;--bdr2:#2e3547;
+  --txt:#dde2f0;--dim:#5a6480;--dim2:#7a86a8;
+  --blue:#5b8ff7;--green:#2ec98c;--gold:#e8a230;--red:#e05a5a;--violet:#9b7ff5;--orange:#e87d3e;
+  --r:14px;
+}
+html,body{height:100%;overflow:hidden}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--txt);display:flex;flex-direction:column}
+::-webkit-scrollbar{width:3px;height:3px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--bdr2);border-radius:99px}
+
+#loading{position:fixed;inset:0;z-index:6000;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px}
+.ld-logo{font-size:1.8rem;font-weight:900}.ld-logo em{color:var(--blue);font-style:normal}
+.ld-sub{font-size:.72rem;color:var(--dim2)}
+.ld-spin{width:28px;height:28px;border:3px solid var(--bdr2);border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+#setup-screen{position:fixed;inset:0;z-index:5000;background:var(--bg);display:none;flex-direction:column;align-items:center;justify-content:center;padding:max(30px,env(safe-area-inset-top)) 24px 30px}
+.setup-logo{font-size:1.8rem;font-weight:900;margin-bottom:6px}.setup-logo em{color:var(--blue);font-style:normal}
+.setup-title{font-size:.95rem;font-weight:700;margin-bottom:8px;text-align:center}
+.setup-desc{font-size:.73rem;color:var(--dim2);margin-bottom:28px;text-align:center;line-height:1.6;max-width:260px}
+.setup-inp{width:240px;background:var(--surf);border:2px solid var(--bdr);border-radius:12px;color:var(--txt);font-size:1.2rem;font-weight:700;padding:14px;text-align:center;outline:none;margin-bottom:12px;font-family:inherit;transition:border-color .2s}
+.setup-inp:focus{border-color:var(--blue)}
+.setup-btn{width:240px;background:var(--blue);border:none;border-radius:12px;color:#fff;font-size:.9rem;font-weight:700;padding:14px;cursor:pointer;font-family:inherit}
+.setup-err{font-size:.72rem;color:var(--red);min-height:18px;margin-top:8px;text-align:center}
+.setup-hint{margin-top:12px;font-size:.65rem;color:var(--dim);text-align:center;line-height:1.6;max-width:240px}
+
+#lock-screen{position:fixed;inset:0;z-index:5000;background:var(--bg);display:none;flex-direction:column;align-items:center;justify-content:center;padding:max(30px,env(safe-area-inset-top)) 24px 30px}
+.lock-logo{font-size:1.8rem;font-weight:900;margin-bottom:4px}.lock-logo em{color:var(--blue);font-style:normal}
+.lock-sub{font-size:.68rem;color:var(--dim2);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+.lock-desc{font-size:.72rem;color:var(--dim);margin-bottom:32px;text-align:center;line-height:1.5;max-width:230px}
+.lock-inp-wrap{position:relative;margin-bottom:16px}
+.lock-inp{width:240px;background:var(--surf);border:2px solid var(--bdr);border-radius:12px;color:var(--txt);font-size:1.2rem;font-weight:700;padding:14px 44px 14px 14px;text-align:center;outline:none;font-family:inherit;transition:border-color .2s}
+.lock-inp:focus{border-color:var(--blue)}.lock-inp.err{border-color:var(--red)}
+.lock-eye{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--dim2);font-size:1rem;cursor:pointer;padding:4px}
+.lock-btn{width:240px;background:var(--blue);border:none;border-radius:12px;color:#fff;font-size:.9rem;font-weight:700;padding:14px;cursor:pointer;font-family:inherit;margin-bottom:10px}
+.lock-btn:active{opacity:.85}
+.lock-msg{font-size:.74rem;color:var(--red);min-height:18px;text-align:center}
+
+#sync-bar{position:fixed;top:0;left:0;right:0;z-index:4500;padding:5px 13px;display:none;align-items:center;gap:7px;font-size:.67rem}
+#sync-bar.show{display:flex}
+#sync-bar.syncing{background:rgba(91,143,247,.12);border-bottom:1px solid rgba(91,143,247,.2);color:var(--blue)}
+#sync-bar.ok{background:rgba(46,201,140,.1);border-bottom:1px solid rgba(46,201,140,.15);color:var(--green)}
+#sync-bar.err{background:rgba(224,90,90,.1);border-bottom:1px solid rgba(224,90,90,.15);color:var(--red)}
+.sync-dot{width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0}
+
+#app{flex:1;display:flex;flex-direction:column;overflow:hidden}
+#topbar{background:var(--surf);border-bottom:1px solid var(--bdr);padding:max(13px,env(safe-area-inset-top)) 13px 10px;flex-shrink:0;display:flex;align-items:center;gap:8px}
+.tb-logo{font-size:.95rem;font-weight:900;flex-shrink:0}.tb-logo em{color:var(--blue);font-style:normal}
+.tb-center{flex:1;min-width:0;text-align:center}
+.tb-title{font-size:.85rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tb-sub{font-size:.6rem;color:var(--dim2);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tb-right{display:flex;gap:5px;align-items:center;flex-shrink:0}
+.ib{background:var(--surf2);border:1px solid var(--bdr);border-radius:9px;color:var(--dim2);width:32px;height:32px;font-size:.82rem;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:inherit}
+.ib:active{background:var(--surf3)}
+.back-btn{background:transparent;border:none;color:var(--blue);font-size:.8rem;font-weight:700;cursor:pointer;font-family:inherit;padding:0;white-space:nowrap;flex-shrink:0}
+
+.week-nav-bar{display:flex;align-items:center;justify-content:space-between;padding:7px 13px;background:var(--surf);border-bottom:1px solid var(--bdr);flex-shrink:0}
+.nav-btn{background:var(--surf2);border:1px solid var(--bdr);border-radius:8px;color:var(--dim2);width:30px;height:30px;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.nav-btn:active{background:var(--surf3)}
+.week-badge{text-align:center;line-height:1.15;cursor:pointer;padding:0 4px}
+.wb-label{font-size:.52rem;color:var(--dim);letter-spacing:.1em;text-transform:uppercase}
+.wb-num{font-size:1rem;font-weight:800}
+.wb-year{font-size:.56rem;color:var(--dim)}
+
+/* Barre d'actions impression dans le stand */
+.stand-action-bar{display:flex;gap:8px;padding:8px 11px;background:var(--surf);border-bottom:1px solid var(--bdr);flex-shrink:0}
+.action-btn{flex:1;padding:8px 10px;border:none;border-radius:9px;font-size:.74rem;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:5px}
+.action-btn.print{background:rgba(91,143,247,.12);border:1px solid rgba(91,143,247,.3);color:var(--blue)}
+.action-btn.print:active{background:rgba(91,143,247,.2)}
+.action-btn.week{background:var(--surf2);border:1px solid var(--bdr);color:var(--dim2)}
+.action-btn.week:active{background:var(--surf3)}
+
+#pages{flex:1;overflow:hidden;position:relative}
+.page{position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:13px 11px max(26px,env(safe-area-inset-bottom));display:none}
+.page.active{display:block}
+
+.sec-title{font-size:.58rem;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--dim);margin-bottom:9px;margin-top:4px}
+.card-list{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
+
+.fete-card{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r);padding:13px 14px;cursor:pointer}
+.fete-card:active{background:var(--surf2)}
+.fete-card-top{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.fete-icon{width:44px;height:44px;border-radius:10px;background:var(--surf2);border:1px solid var(--bdr);display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0}
+.fete-info{flex:1;min-width:0}
+.fete-name{font-size:.9rem;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fete-city{font-size:.68rem;color:var(--blue);margin-top:2px}
+.fete-dates{font-size:.62rem;color:var(--dim2);margin-top:1px}
+.fete-arr{color:var(--dim2);flex-shrink:0}
+.fete-stats{display:flex;gap:8px;padding-top:8px;border-top:1px solid var(--bdr)}
+.fete-stat{flex:1;text-align:center}
+.fete-stat-n{font-size:.8rem;font-weight:700;color:var(--gold)}
+.fete-stat-l{font-size:.56rem;color:var(--dim);text-transform:uppercase;letter-spacing:.07em;margin-top:1px}
+
+.stand-card{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r);padding:13px 14px;cursor:pointer;display:flex;align-items:center;gap:11px}
+.stand-card:active{background:var(--surf2)}
+.stand-icon{width:42px;height:42px;border-radius:10px;background:var(--surf2);border:1px solid var(--bdr);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0}
+.stand-info{flex:1;min-width:0}
+.stand-name{font-size:.88rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stand-meta{font-size:.63rem;color:var(--dim2);margin-top:3px}
+.stand-total{text-align:right;flex-shrink:0}
+.stand-total-v{font-size:.9rem;font-weight:800;color:var(--gold)}
+.stand-total-l{font-size:.55rem;color:var(--dim);text-transform:uppercase;letter-spacing:.07em;margin-top:1px}
+
+.add-btn{width:100%;background:transparent;border:2px dashed var(--bdr);border-radius:var(--r);padding:13px;color:var(--dim2);font-size:.78rem;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:7px}
+.add-btn:active{background:var(--surf)}
+
+.modal-ov{position:fixed;inset:0;z-index:3500;background:rgba(0,0,0,.85);display:none;align-items:flex-end;justify-content:center}
+.modal-ov.show{display:flex}
+.modal-box{background:var(--surf);border-radius:20px 20px 0 0;border:1px solid var(--bdr);width:100%;max-width:500px;padding:20px 16px max(20px,env(safe-area-inset-bottom));max-height:85vh;overflow-y:auto}
+.modal-title{font-size:.9rem;font-weight:800;margin-bottom:14px}
+.emoji-grid{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px}
+.emo{width:37px;height:37px;border-radius:9px;border:2px solid var(--bdr);background:var(--surf2);font-size:1.15rem;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.emo.sel{border-color:var(--blue);background:rgba(91,143,247,.1)}
+.modal-inp{width:100%;background:var(--surf2);border:1px solid var(--bdr);border-radius:9px;color:var(--txt);font-size:.92rem;padding:10px 12px;outline:none;font-family:inherit;margin-bottom:11px}
+.modal-inp:focus{border-color:var(--blue)}
+.modal-inp-row{display:flex;gap:8px;margin-bottom:11px}
+.modal-inp-row .modal-inp{margin-bottom:0;flex:1}
+.modal-label{font-size:.65rem;color:var(--dim2);margin-bottom:4px;letter-spacing:.05em;text-transform:uppercase}
+.modal-row{display:flex;gap:7px}
+.mbtn{flex:1;padding:11px;border:none;border-radius:9px;font-size:.82rem;font-weight:700;cursor:pointer;font-family:inherit}
+.mbtn.pri{background:var(--blue);color:#fff}.mbtn.pri:active{opacity:.85}
+.mbtn.sec{background:var(--surf2);border:1px solid var(--bdr);color:var(--dim2)}
+
+/* MODAL IMPRESSION */
+.print-modal-box{background:var(--surf);border-radius:20px 20px 0 0;border:1px solid var(--bdr);width:100%;max-width:500px;padding:20px 16px max(20px,env(safe-area-inset-bottom))}
+.week-select-list{display:flex;flex-direction:column;gap:6px;max-height:300px;overflow-y:auto;margin-bottom:14px}
+.week-select-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--surf2);border:1px solid var(--bdr);border-radius:9px;cursor:pointer}
+.week-select-item.selected{border-color:var(--blue);background:rgba(91,143,247,.08)}
+.wsi-check{width:20px;height:20px;border-radius:5px;border:2px solid var(--bdr2);background:transparent;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:.8rem}
+.week-select-item.selected .wsi-check{background:var(--blue);border-color:var(--blue);color:#fff}
+.wsi-info{flex:1}
+.wsi-title{font-size:.82rem;font-weight:700}
+.wsi-sub{font-size:.63rem;color:var(--dim2);margin-top:2px}
+.wsi-total{font-size:.82rem;font-weight:700;color:var(--gold);flex-shrink:0}
+.select-all-btn{display:block;width:100%;background:transparent;border:1px solid var(--bdr);border-radius:7px;color:var(--dim2);font-size:.72rem;font-family:inherit;padding:7px;cursor:pointer;text-align:center;margin-bottom:10px}
+
+.scroll-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:4px;margin-bottom:11px}
+.week-grid{display:flex;gap:8px;width:max-content}
+.day-card{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r);width:136px;flex-shrink:0;overflow:hidden}
+.day-card.today{border-color:var(--blue)}
+.card-head{background:var(--surf2);padding:7px 9px 5px;border-bottom:1px solid var(--bdr);text-align:center}
+.day-card.today .card-head{background:rgba(91,143,247,.08);border-bottom-color:rgba(91,143,247,.2)}
+.cdn{font-size:.64rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase}
+.day-card.today .cdn{color:var(--blue)}
+.date-inp{background:transparent;border:none;border-top:1px solid var(--bdr);color:var(--dim2);font-size:.63rem;padding:3px 3px 0;width:100%;text-align:center;outline:none;margin-top:3px;font-family:inherit}
+.card-body{padding:7px;display:flex;flex-direction:column;gap:4px}
+.fg{display:flex;flex-direction:column;gap:2px}
+.fl{font-size:.54rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding-left:2px;color:var(--dim)}
+.fl.cb{color:var(--blue)}.fl.cash{color:var(--green)}.fl.tot{color:var(--gold)}
+.ai{background:var(--surf2);border:1px solid var(--bdr);border-radius:6px;color:var(--txt);font-size:.88rem;font-weight:500;padding:5px 6px;width:100%;text-align:right;outline:none;font-family:inherit;-webkit-appearance:none}
+.ai.cb:focus{border-color:var(--blue)}.ai.cash:focus{border-color:var(--green)}
+.tbox{background:rgba(232,162,48,.07);border:1px solid rgba(232,162,48,.2);border-radius:6px;color:var(--gold);font-size:.86rem;font-weight:600;padding:5px 6px;text-align:right}
+.tbox.z{background:var(--surf2);border-color:var(--bdr);color:var(--dim);font-weight:400}
+.tot-card{background:var(--surf);border:1px solid rgba(232,162,48,.3);border-radius:var(--r);width:148px;flex-shrink:0;overflow:hidden}
+.tot-card .card-head{background:rgba(232,162,48,.06);border-bottom-color:rgba(232,162,48,.15)}
+.tot-card .cdn{color:var(--gold)}
+.gbox{background:rgba(232,162,48,.1);border:1px solid rgba(232,162,48,.35);border-radius:6px;color:var(--gold);font-size:.94rem;font-weight:700;padding:6px 6px;text-align:right}
+.gbox.z{background:var(--surf2);border-color:var(--bdr);color:var(--dim);font-weight:400}
+
+.strip{display:flex;gap:7px;overflow-x:auto;margin-bottom:11px}
+.sc{flex:1 0 80px;background:var(--surf);border:1px solid var(--bdr);border-radius:10px;padding:8px 10px;border-top-width:3px}
+.sc.cb{border-top-color:var(--blue)}.sc.cash{border-top-color:var(--green)}.sc.tot{border-top-color:var(--gold)}
+.sl{font-size:.54rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--dim);margin-bottom:2px}
+.sv{font-size:.88rem;font-weight:700}
+.sc.cb .sv{color:var(--blue)}.sc.cash .sv{color:var(--green)}.sc.tot .sv{color:var(--gold)}
+
+.fees-panel{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r);padding:13px;margin-bottom:11px}
+.fees-title{font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin-bottom:11px}
+.fee-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;gap:8px}
+.fee-label{font-size:.74rem;color:var(--txt);flex:1}
+.fee-pct{font-size:.62rem;color:var(--dim);background:var(--surf2);border-radius:4px;padding:2px 5px;margin-left:4px}
+.fee-val{font-size:.84rem;font-weight:700;text-align:right;min-width:80px}
+.fee-inp{background:var(--surf2);border:1px solid var(--bdr);border-radius:7px;color:var(--txt);font-size:.84rem;padding:5px 8px;width:100px;text-align:right;outline:none;font-family:inherit;-webkit-appearance:none}
+.fee-inp:focus{border-color:var(--orange)}
+.fee-label-inp{background:transparent;border:none;border-bottom:1px dashed var(--bdr2);color:var(--txt);font-size:.74rem;outline:none;font-family:inherit;flex:1;padding:2px 0;min-width:0}
+.fee-label-inp::placeholder{color:var(--dim)}
+.fee-label-inp:focus{border-bottom-color:var(--orange)}
+.fee-divider{border:none;border-top:1px solid var(--bdr);margin:8px 0}
+.net-row{display:flex;align-items:center;justify-content:space-between;padding-top:2px}
+.net-label{font-size:.8rem;font-weight:700;color:var(--green)}
+.net-val{font-size:1.1rem;font-weight:800;color:var(--green)}
+.net-val.neg{color:var(--red)}
+.reset-btn{display:block;width:100%;background:transparent;border:1px solid var(--bdr);border-radius:9px;color:var(--dim2);font-size:.72rem;font-family:inherit;padding:9px;cursor:pointer;text-align:center;margin-top:4px}
+.reset-btn:active{background:var(--surf2)}
+.empty{text-align:center;padding:40px 18px;color:var(--dim2);font-size:.78rem}
+.empty-i{font-size:2.2rem;margin-bottom:9px}
+
+/* PRINT */
+#print-ov{display:none;position:fixed;inset:0;z-index:3500;background:#fff;overflow-y:auto}
+#print-ov.show{display:block}
+.ps-bar{display:flex;justify-content:space-between;align-items:center;background:#111;padding:10px 15px;position:sticky;top:0;z-index:10}
+.ps-bar span{color:#fff;font-size:.78rem;font-weight:600}
+.ps-pb{background:#4f8ef7;border:none;border-radius:6px;color:#fff;font-size:.75rem;font-weight:700;padding:6px 13px;cursor:pointer}
+.ps-cb{background:transparent;border:1px solid #444;border-radius:6px;color:#ccc;font-size:.75rem;padding:5px 10px;cursor:pointer}
+.psheet{width:100%;max-width:900px;margin:0 auto;padding:18px 15px 30px;font-family:Arial,sans-serif;color:#111;font-size:.8rem}
+.p-header{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid #111;padding-bottom:10px;margin-bottom:14px}
+.p-title{font-size:1.2rem;font-weight:900}.p-title span{color:#4f8ef7}
+.p-sub{font-size:.85rem;font-weight:700;color:#333;margin-top:3px}
+.p-meta{text-align:right;font-size:.72rem;color:#555;line-height:1.7}
+.p-meta strong{color:#111;font-size:.82rem}
+.p-summary{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.p-sc{flex:1 0 80px;border:2px solid #ddd;border-radius:7px;padding:8px 10px;text-align:center}
+.p-sc.cb{border-color:#93c5fd}.p-sc.cash{border-color:#6ee7b7}.p-sc.tot{border-color:#fbbf24;background:#fffbeb}.p-sc.net{border-color:#86efac;background:#f0fdf4}
+.p-sl{font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:#666;margin-bottom:2px}
+.p-sv{font-size:.95rem;font-weight:800}
+.p-sc.cb .p-sv{color:#2563eb}.p-sc.cash .p-sv{color:#059669}.p-sc.tot .p-sv{color:#b45309}.p-sc.net .p-sv{color:#16a34a}
+.p-week-block{margin-bottom:20px;page-break-inside:avoid}
+.p-week-title{font-size:.8rem;font-weight:800;color:#333;margin-bottom:7px;padding:6px 10px;background:#f0f4ff;border-radius:5px;border-left:4px solid #5b8ff7}
+.p-week-summary{display:flex;gap:8px;margin-bottom:7px;flex-wrap:wrap}
+.p-ws{flex:1 0 60px;border:1px solid #e5e5e5;border-radius:5px;padding:5px 8px;text-align:center}
+.p-ws-l{font-size:.55rem;font-weight:700;text-transform:uppercase;color:#888;margin-bottom:1px}
+.p-ws-v{font-size:.82rem;font-weight:700}
+.ptbl{width:100%;border-collapse:collapse;margin-bottom:8px;font-size:.75rem}
+.ptbl th{background:#333;color:#fff;padding:5px 7px;text-align:center;font-size:.63rem;letter-spacing:.06em;text-transform:uppercase}
+.ptbl th.th-tot{background:#b45309}
+.ptbl td{border:1px solid #e5e5e5;padding:6px 7px;text-align:center}
+.ptbl tr:nth-child(even) td{background:#fafafa}
+.td-day{font-weight:700;font-size:.72rem;background:#f5f5f5!important;text-align:left!important;padding-left:10px!important}
+.td-num{font-weight:600;font-family:monospace;font-size:.76rem}
+.td-tot{font-weight:800;color:#b45309;font-family:monospace}
+.td-z{color:#ccc}
+.p-fees-block{background:#f9f9f9;border:2px solid #e5e5e5;border-radius:8px;padding:12px 14px;margin-top:20px;page-break-inside:avoid}
+.p-fees-title{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:#555;margin-bottom:10px}
+.p-fee-row{display:flex;justify-content:space-between;align-items:center;font-size:.78rem;margin-bottom:6px}
+.p-fee-row .pk{color:#444}.p-fee-row .pv{font-weight:700}
+.p-fee-row.net{margin-top:8px;padding-top:8px;border-top:2px solid #ddd}
+.p-fee-row.net .pk{color:#16a34a;font-weight:800;font-size:.85rem}
+.p-fee-row.net .pv{color:#16a34a;font-size:1rem;font-weight:800}
+.p-fee-sub{font-size:.66rem;color:#999;text-align:right;margin-top:5px}
+.p-footer{border-top:1px solid #ddd;padding-top:8px;font-size:.66rem;color:#999;display:flex;justify-content:space-between;margin-top:14px}
+@media print{body>*:not(#print-ov){display:none!important}#print-ov{display:block!important;position:static!important}.ps-bar{display:none!important}@page{size:A4;margin:12mm}}
+
+#toast{position:fixed;bottom:max(18px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%) translateY(70px);background:var(--surf2);border:1px solid var(--bdr2);border-radius:20px;padding:7px 17px;font-size:.72rem;color:var(--green);pointer-events:none;transition:transform .3s cubic-bezier(.34,1.56,.64,1);z-index:9999;white-space:nowrap}
+#toast.show{transform:translateX(-50%) translateY(0)}
+#ios-hint{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--surf);border-top:1px solid var(--bdr);padding:12px 16px max(14px,env(safe-area-inset-bottom));z-index:4000;gap:10px;align-items:center}
+#ios-hint.show{display:flex}
+#ios-hint p{flex:1;font-size:.74rem;line-height:1.5}
+#ios-hint p em{color:var(--blue);font-style:normal;font-weight:700}
+#ios-hint p strong{color:var(--gold)}
+.hint-close{background:transparent;border:none;color:var(--dim2);font-size:1.2rem;cursor:pointer;padding:4px;flex-shrink:0}
+</style>
+</head>
+<body>
+
+<div id="loading"><div class="ld-logo">Recettes<em> Pro</em></div><div class="ld-sub">Chargement…</div><div class="ld-spin"></div></div>
+
+<div id="setup-screen">
+  <div class="setup-logo">Recettes<em> Pro</em></div>
+  <div class="setup-title">Créer votre code secret</div>
+  <div class="setup-desc">Choisissez un code partagé entre vous deux. Minimum 4 caractères.</div>
+  <input class="setup-inp" id="setupInp" type="password" placeholder="votre code" maxlength="30" autocomplete="new-password">
+  <button class="setup-btn" id="setupBtn">Créer le code</button>
+  <div class="setup-err" id="setupErr"></div>
+  <div class="setup-hint">Sur l'autre téléphone, entrez le même code pour accéder aux mêmes données.</div>
+</div>
+
+<div id="lock-screen">
+  <div class="lock-logo">Recettes<em> Pro</em></div>
+  <div class="lock-sub">Accès privé</div>
+  <div class="lock-desc">Entrez votre code secret</div>
+  <div class="lock-inp-wrap">
+    <input class="lock-inp" id="lockInp" type="password" placeholder="code secret" maxlength="30" autocomplete="current-password">
+    <button class="lock-eye" id="eyeBtn">👁</button>
+  </div>
+  <button class="lock-btn" id="lockSubmitBtn">Accéder</button>
+  <div class="lock-msg" id="lockMsg"></div>
+</div>
+
+<div id="sync-bar"><div class="sync-dot"></div><span id="syncText"></span></div>
+
+<div id="app" style="display:none">
+  <div id="topbar">
+    <div id="tbBack"></div>
+    <div class="tb-center" id="tbCenter"><div class="tb-logo">Recettes<em> Pro</em></div></div>
+    <div class="tb-right" id="tbRight"><button class="ib" id="lockBtnG">🔒</button></div>
+  </div>
+  <div id="weekNavBar" style="display:none">
+    <div class="week-nav-bar">
+      <button class="nav-btn" id="prevW">‹</button>
+      <div class="week-badge" id="weekBadge">
+        <div class="wb-label">Semaine</div>
+        <div class="wb-num" id="wNum">—</div>
+        <div class="wb-year" id="wYear">—</div>
+      </div>
+      <button class="nav-btn" id="nextW">›</button>
+    </div>
+    <!-- Barre actions stand -->
+    <div class="stand-action-bar">
+      <button class="action-btn week" id="addWeekBtnTop">＋ Nouvelle semaine</button>
+      <button class="action-btn print" id="printStandBtn">🖨 Imprimer le stand</button>
+    </div>
+  </div>
+  <div id="pages">
+    <div class="page active" id="page-fetes"><div id="fetesContent"></div></div>
+    <div class="page" id="page-stands"><div id="standsContent"></div></div>
+    <div class="page" id="page-stand">
+      <div class="scroll-wrap"><div class="week-grid" id="weekGrid"></div></div>
+      <div class="strip" id="strip"></div>
+      <div class="fees-panel" id="feesPanel"></div>
+      <button class="reset-btn" id="resetBtn">↺ Réinitialiser cette semaine</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL FÊTE -->
+<div class="modal-ov" id="feteModal">
+  <div class="modal-box">
+    <div class="modal-title" id="feteModalTitle">Nouvelle fête</div>
+    <div class="modal-label">Nom de la fête</div>
+    <input class="modal-inp" id="feteNom" type="text" placeholder="ex: Fête de Paris" maxlength="40" autocomplete="off">
+    <div class="modal-label">Ville</div>
+    <input class="modal-inp" id="feteVille" type="text" placeholder="ex: Paris" maxlength="40" autocomplete="off">
+    <div class="modal-label">Dates (optionnel)</div>
+    <div class="modal-inp-row">
+      <input class="modal-inp" id="feteDebut" type="text" placeholder="Début ex: 24/04">
+      <input class="modal-inp" id="feteFin" type="text" placeholder="Fin ex: 10/05">
+    </div>
+    <div class="modal-row">
+      <button class="mbtn sec" id="feteCancel">Annuler</button>
+      <button class="mbtn pri" id="feteSave">Créer</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL STAND -->
+<div class="modal-ov" id="standModal">
+  <div class="modal-box">
+    <div class="modal-title" id="standModalTitle">Nouveau stand</div>
+    <div class="emoji-grid" id="standEmojiGrid"></div>
+    <div class="modal-label">Nom du stand</div>
+    <input class="modal-inp" id="standNom" type="text" placeholder="ex: Tir à l'air, Jet Ball…" maxlength="30" autocomplete="off">
+    <div class="modal-row">
+      <button class="mbtn sec" id="standCancel">Annuler</button>
+      <button class="mbtn pri" id="standSave">Ajouter</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL SEMAINE -->
+<div class="modal-ov" id="weekModal">
+  <div class="modal-box">
+    <div class="modal-title">Ajouter une semaine</div>
+    <div class="modal-label">Numéro de semaine</div>
+    <input class="modal-inp" id="wkNum" type="number" placeholder="ex: 17" min="1" max="99">
+    <div class="modal-label">Année</div>
+    <input class="modal-inp" id="wkYear" type="number" placeholder="ex: 2025" min="2020" max="2099">
+    <div class="modal-row">
+      <button class="mbtn sec" id="wkCancel">Annuler</button>
+      <button class="mbtn pri" id="wkSave">Ajouter</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL IMPRESSION — sélection des semaines -->
+<div class="modal-ov" id="printModal">
+  <div class="modal-box">
+    <div class="modal-title">🖨 Choisir les semaines à imprimer</div>
+    <button class="select-all-btn" id="selectAllBtn">Tout sélectionner / Tout déselectionner</button>
+    <div class="week-select-list" id="weekSelectList"></div>
+    <!-- Résumé de la sélection -->
+    <div id="printSummary" style="background:rgba(232,162,48,.08);border:1px solid rgba(232,162,48,.2);border-radius:9px;padding:10px 12px;margin-bottom:12px;font-size:.74rem;display:none">
+      <div style="font-weight:700;color:var(--gold);margin-bottom:4px" id="printSumTitle"></div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap">
+        <div>CB : <strong id="printSumCB" style="color:var(--blue)"></strong></div>
+        <div>Espèces : <strong id="printSumCash" style="color:var(--green)"></strong></div>
+        <div>Brut : <strong id="printSumGrand" style="color:var(--gold)"></strong></div>
+        <div>Net : <strong id="printSumNet" style="color:var(--green)"></strong></div>
+      </div>
+    </div>
+    <div class="modal-row">
+      <button class="mbtn sec" id="printCancel">Annuler</button>
+      <button class="mbtn pri" id="printConfirm">Générer l'impression</button>
+    </div>
+  </div>
+</div>
+
+<!-- PRINT -->
+<div id="print-ov">
+  <div class="ps-bar">
+    <span id="printTitle">Impression</span>
+    <div style="display:flex;gap:7px">
+      <button class="ps-pb" onclick="window.print()">🖨 Imprimer</button>
+      <button class="ps-cb" id="closePrint">✕ Fermer</button>
+    </div>
+  </div>
+  <div class="psheet" id="printSheet"></div>
+</div>
+
+<div id="ios-hint">
+  <p>Installer : <em>⎙ Partager</em> → <strong>"Sur l'écran d'accueil"</strong></p>
+  <button class="hint-close" id="hintClose">✕</button>
+</div>
+<div id="toast">✓ Sauvegardé</div>
+
+<script>
+const SUPA_URL='https://pnnboagofaoesvweyzcl.supabase.co';
+const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBubmJvYWdvZmFvZXN2d2V5emNsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYzNTE5NDcsImV4cCI6MjA5MTkyNzk0N30.cqVC-quyZXN5jM0Kl3ZZW-Xu_dl1Szau0ltXplAP2a4';
+
+const DAYS=['Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi','Dimanche'];
+const EMOJIS=['🎯','💦','🍕','☕','🧁','🎪','🛒','🏆','🎡','🎠','💈','🎨','🔧','👗','🌮','🎶','🍦','🎲'];
+const FEES_RATE=0.33;
+
+let isUnlocked=false,dataRowId=null;
+let curFeteId=null,curStandId=null,curWIdx=0;
+let editFeteId=null,editStandId=null,selEmoji='🎯';
+let toastT=null,saveT=null,pollT=null;
+let appData={fetes:[]};
+let selectedWeekIds=new Set();
+
+const $=id=>document.getElementById(id);
+const fmt=v=>v===0?'0,00 €':v.toLocaleString('fr-FR',{minimumFractionDigits:2,maximumFractionDigits:2})+' €';
+const parseA=s=>{const v=parseFloat(String(s||'').replace(',','.'));return isNaN(v)?0:v;};
+const fmtDate=r=>{let v=r.replace(/\D/g,'');if(v.length>=3)v=v.slice(0,2)+'/'+v.slice(2,4);return v;};
+function todayI(){const d=new Date().getDay();return d===0?6:d-1;}
+function showToast(m='✓ Sauvegardé'){$('toast').textContent=m;$('toast').classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>$('toast').classList.remove('show'),1800);}
+function setPage(n){document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id==='page-'+n));}
+function computeTotals(days){let tCB=0,tCash=0;const dt=days.map(d=>{const cb=parseA(d.cb),cash=parseA(d.cash);tCB+=cb;tCash+=cash;return{cb,cash,total:cb+cash};});return{dt,tCB,tCash,grand:tCB+tCash};}
+function uid(){return Date.now()+'_'+Math.random().toString(36).slice(2);}
+function emptyWeek(num,year){return{id:'w'+uid(),num,year,days:DAYS.map(()=>({date:'',cb:'',cash:''})),fees:{place:'',courant:'',extra:'',extraLabel:''}};}
+function getCurWY(){const n=new Date(),d1=new Date(n.getFullYear(),0,1);return{year:n.getFullYear(),week:Math.ceil(((n-d1)/86400000+d1.getDay()+1)/7)};}
+function getNextWeek(stand){
+  if(stand&&stand.weeks&&stand.weeks.length){const s=[...stand.weeks].sort((a,b)=>b.year-a.year||b.num-a.num);let{num,year}=s[0];num++;if(num>52){num=1;year++;}return{week:num,year};}
+  return getCurWY();
+}
+
+// HASH & SUPABASE
+function hashStr(s){let h=0xABCD1234;const str=s+'rp_xg_2025_private';for(let i=0;i<str.length;i++){h=Math.imul(h^str.charCodeAt(i),0x9e3779b9);h^=h>>>16;}return(h>>>0).toString(16).padStart(8,'0');}
+const getLocalHash=()=>localStorage.getItem('rp_h2');
+const setLocalHash=s=>localStorage.setItem('rp_h2',hashStr(s));
+const checkSecret=s=>getLocalHash()===hashStr(s);
+
+async function supaGet(){const r=await fetch(`${SUPA_URL}/rest/v1/recettes_data?id=eq.${dataRowId}&select=data`,{headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}});if(!r.ok)throw new Error('GET '+r.status);const rows=await r.json();return(rows&&rows.length)?rows[0].data:null;}
+async function supaUpsert(data){const r=await fetch(`${SUPA_URL}/rest/v1/recettes_data`,{method:'POST',headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':'resolution=merge-duplicates'},body:JSON.stringify({id:dataRowId,data,updated_at:new Date().toISOString()})});if(!r.ok){const t=await r.text();throw new Error('UPSERT '+r.status+' '+t);}}
+async function loadFromCloud(){if(!dataRowId)return;try{const data=await supaGet();if(data&&typeof data==='object'){appData=data;if(!Array.isArray(appData.fetes))appData.fetes=[];}}catch(e){console.error('Load:',e);}}
+function scheduleSave(){clearTimeout(saveT);saveT=setTimeout(async()=>{showSync('syncing');try{await supaUpsert(appData);showSync('ok');setTimeout(hideSync,2000);}catch(e){console.error('Save:',e);showSync('err');setTimeout(hideSync,4000);}},600);}
+function showSync(t){const b=$('sync-bar');b.className='show '+t;$('syncText').textContent={syncing:'Synchronisation…',ok:'✓ Synchronisé',err:'⚠ Erreur de sauvegarde'}[t];}
+function hideSync(){$('sync-bar').className='';}
+function startPolling(){clearInterval(pollT);pollT=setInterval(async()=>{if(!isUnlocked||!dataRowId)return;try{const data=await supaGet();if(data&&typeof data==='object'){appData=data;if(!Array.isArray(appData.fetes))appData.fetes=[];if(curStandId)renderStandView();else if(curFeteId)renderStands();else renderFetes();}}catch(e){}},30000);}
+
+// DATA
+function getFetes(){return appData.fetes||[];}
+function saveFetes(f){appData.fetes=f;scheduleSave();}
+function getFete(id){return getFetes().find(f=>f.id===id)||null;}
+function saveFete(fete){const l=getFetes();const i=l.findIndex(f=>f.id===fete.id);if(i>=0)l[i]=fete;else l.push(fete);saveFetes(l);}
+function getStand(fete,id){return(fete?.stands||[]).find(s=>s.id===id)||null;}
+
+// LOCK
+function showLock(){isUnlocked=false;clearInterval(pollT);$('lockInp').value='';$('lockMsg').textContent='';$('lockInp').classList.remove('err');$('app').style.display='none';$('lock-screen').style.display='flex';}
+$('lockBtnG').addEventListener('click',showLock);
+$('lockSubmitBtn').addEventListener('click',tryUnlock);
+$('lockInp').addEventListener('keydown',e=>{if(e.key==='Enter')tryUnlock();});
+$('eyeBtn').addEventListener('click',()=>{const i=$('lockInp');i.type=i.type==='password'?'text':'password';});
+async function tryUnlock(){const val=$('lockInp').value.trim();if(!val)return;if(!checkSecret(val)){$('lockInp').classList.add('err');$('lockMsg').textContent='Code incorrect';setTimeout(()=>{$('lockInp').classList.remove('err');$('lockMsg').textContent='';},1200);return;}dataRowId=getLocalHash();$('lock-screen').style.display='none';$('loading').style.display='flex';$('loading').querySelector('.ld-sub').textContent='Chargement…';await loadFromCloud();$('loading').style.display='none';isUnlocked=true;$('app').style.display='flex';renderFetes();startPolling();}
+$('setupBtn').addEventListener('click',()=>{const val=$('setupInp').value.trim();if(!val||val.length<4){$('setupErr').textContent='Minimum 4 caractères';return;}setLocalHash(val);$('setup-screen').style.display='none';$('lock-screen').style.display='flex';showToast('✓ Code créé !');});
+$('setupInp').addEventListener('keydown',e=>{if(e.key==='Enter')$('setupBtn').click();});
+
+// TOPBAR
+function setTopbar({back,backFn,title,sub,right}={}){
+  $('tbBack').innerHTML=back?`<button class="back-btn" id="backBtnMain">${back}</button>`:'';
+  if(back&&backFn)$('backBtnMain').addEventListener('click',backFn);
+  $('tbCenter').innerHTML=title?`<div class="tb-title">${title}</div>${sub?`<div class="tb-sub">${sub}</div>`:''}`:'<div class="tb-logo">Recettes<em style="color:var(--blue)"> Pro</em></div>';
+  $('tbRight').innerHTML=(right||'')+'<button class="ib" id="lockBtnG2">🔒</button>';
+  $('lockBtnG2').addEventListener('click',showLock);
+  $('weekNavBar').style.display='none';
+}
+
+// PAGE FÊTES
+function goFetes(){curFeteId=null;curStandId=null;curWIdx=0;renderFetes();}
+function renderFetes(){
+  setTopbar({});setPage('fetes');
+  const fetes=getFetes();let h='';
+  if(fetes.length){
+    h+='<div class="sec-title">Mes fêtes</div><div class="card-list">';
+    fetes.forEach(f=>{
+      const nbStands=(f.stands||[]).length;
+      let totalGrand=0;(f.stands||[]).forEach(s=>(s.weeks||[]).forEach(w=>{totalGrand+=computeTotals(w.days).grand;}));
+      const dateStr=f.debut&&f.fin?`${f.debut} → ${f.fin}`:f.debut?`Depuis ${f.debut}`:'';
+      h+=`<div class="fete-card" data-id="${f.id}">
+        <div class="fete-card-top">
+          <div class="fete-icon">🎪</div>
+          <div class="fete-info">
+            <div class="fete-name">${f.nom}</div>
+            ${f.ville?`<div class="fete-city">📍 ${f.ville}</div>`:''}
+            ${dateStr?`<div class="fete-dates">📅 ${dateStr}</div>`:''}
+          </div>
+          <div class="fete-arr">›</div>
+        </div>
+        <div class="fete-stats">
+          <div class="fete-stat"><div class="fete-stat-n">${nbStands}</div><div class="fete-stat-l">Stand${nbStands!==1?'s':''}</div></div>
+          <div class="fete-stat"><div class="fete-stat-n" style="color:var(--blue)">${(f.stands||[]).reduce((a,s)=>a+(s.weeks||[]).length,0)}</div><div class="fete-stat-l">Semaines</div></div>
+          <div class="fete-stat"><div class="fete-stat-n">${totalGrand>0?fmt(totalGrand):'—'}</div><div class="fete-stat-l">Total brut</div></div>
+        </div>
+      </div>`;
+    });
+    h+='</div>';
+  } else {
+    h+='<div class="empty"><div class="empty-i">🎪</div>Aucune fête.<br><span style="font-size:.71rem;display:block;margin-top:5px">Crée ta première fête !</span></div>';
+  }
+  h+='<button class="add-btn" id="addFeteBtn">＋ Nouvelle fête</button>';
+  $('fetesContent').innerHTML=h;
+  $('fetesContent').querySelectorAll('.fete-card').forEach(c=>c.addEventListener('click',()=>openFete(c.dataset.id)));
+  $('addFeteBtn').addEventListener('click',()=>openFeteModal(null));
+}
+
+// MODAL FÊTE
+function openFeteModal(id){editFeteId=id;const f=id?getFete(id):null;$('feteModalTitle').textContent=id?'Modifier la fête':'Nouvelle fête';$('feteSave').textContent=id?'Enregistrer':'Créer';$('feteNom').value=f?.nom||'';$('feteVille').value=f?.ville||'';$('feteDebut').value=f?.debut||'';$('feteFin').value=f?.fin||'';$('feteModal').classList.add('show');setTimeout(()=>$('feteNom').focus(),200);}
+$('feteCancel').addEventListener('click',()=>$('feteModal').classList.remove('show'));
+$('feteModal').addEventListener('click',e=>{if(e.target===$('feteModal'))$('feteModal').classList.remove('show');});
+$('feteNom').addEventListener('keydown',e=>{if(e.key==='Enter')$('feteSave').click();});
+$('feteSave').addEventListener('click',()=>{
+  const nom=$('feteNom').value.trim();if(!nom)return;
+  const list=getFetes();
+  if(editFeteId){const f=list.find(x=>x.id===editFeteId);if(f){f.nom=nom;f.ville=$('feteVille').value.trim();f.debut=$('feteDebut').value.trim();f.fin=$('feteFin').value.trim();}}
+  else{list.push({id:'f'+uid(),nom,ville:$('feteVille').value.trim(),debut:$('feteDebut').value.trim(),fin:$('feteFin').value.trim(),stands:[]});}
+  saveFetes(list);$('feteModal').classList.remove('show');
+  if(editFeteId&&curFeteId===editFeteId)renderStands();else renderFetes();
+  showToast(editFeteId?'✓ Fête modifiée':'✓ Fête créée');
+});
+
+// PAGE STANDS
+function openFete(id){curFeteId=id;goStands();}
+function goStands(){curStandId=null;curWIdx=0;renderStands();}
+function renderStands(){
+  const fete=getFete(curFeteId);if(!fete)return;
+  const dateStr=fete.debut&&fete.fin?`${fete.debut} → ${fete.fin}`:fete.debut||'';
+  setTopbar({back:'‹ Accueil',backFn:goFetes,title:`🎪 ${fete.nom}`,sub:[(fete.ville?`📍 ${fete.ville}`:''),dateStr].filter(Boolean).join(' · '),right:`<button class="ib" id="editFeteBtn">✏️</button><button class="ib" id="delFeteBtn" style="color:var(--red)">🗑</button>`});
+  $('editFeteBtn').addEventListener('click',()=>openFeteModal(curFeteId));
+  $('delFeteBtn').addEventListener('click',()=>{const f=getFete(curFeteId);if(!confirm(`Supprimer "${f.nom}" ?`))return;saveFetes(getFetes().filter(f=>f.id!==curFeteId));curFeteId=null;renderFetes();});
+  setPage('stands');
+  const stands=fete.stands||[];let h='';
+  if(stands.length){
+    h+='<div class="sec-title">Stands de cette fête</div><div class="card-list">';
+    stands.forEach(s=>{
+      let totalGrand=0,totalNet=0;
+      (s.weeks||[]).forEach(w=>{const{grand}=computeTotals(w.days);totalGrand+=grand;totalNet+=grand-grand*FEES_RATE-parseA(w.fees?.place)-parseA(w.fees?.courant)-parseA(w.fees?.extra);});
+      h+=`<div class="stand-card" data-id="${s.id}">
+        <div class="stand-icon">${s.emoji||'🎯'}</div>
+        <div class="stand-info">
+          <div class="stand-name">${s.nom}</div>
+          <div class="stand-meta">${(s.weeks||[]).length} semaine${(s.weeks||[]).length!==1?'s':''} · Net : ${totalNet>0?fmt(totalNet):'—'}</div>
+        </div>
+        <div class="stand-total"><div class="stand-total-v">${totalGrand>0?fmt(totalGrand):'—'}</div><div class="stand-total-l">Brut</div></div>
+      </div>`;
+    });
+    h+='</div>';
+  } else {
+    h+='<div class="empty"><div class="empty-i">🎯</div>Aucun stand.<br><span style="font-size:.71rem;display:block;margin-top:5px">Ajoute ton premier stand !</span></div>';
+  }
+  h+='<button class="add-btn" id="addStandBtn">＋ Nouveau stand</button>';
+  $('standsContent').innerHTML=h;
+  $('standsContent').querySelectorAll('.stand-card').forEach(c=>c.addEventListener('click',()=>openStand(c.dataset.id)));
+  $('addStandBtn').addEventListener('click',()=>openStandModal(null));
+}
+
+// MODAL STAND
+function openStandModal(id){editStandId=id;const fete=getFete(curFeteId);const s=id?getStand(fete,id):null;selEmoji=s?.emoji||'🎯';$('standModalTitle').textContent=id?'Modifier':'Nouveau stand';$('standSave').textContent=id?'Enregistrer':'Ajouter';$('standNom').value=s?.nom||'';const eg=$('standEmojiGrid');eg.innerHTML='';EMOJIS.forEach(e=>{const btn=document.createElement('button');btn.className='emo'+(e===selEmoji?' sel':'');btn.textContent=e;btn.addEventListener('click',()=>{selEmoji=e;eg.querySelectorAll('.emo').forEach(b=>b.classList.toggle('sel',b.textContent===e));});eg.appendChild(btn);});$('standModal').classList.add('show');setTimeout(()=>$('standNom').focus(),200);}
+$('standCancel').addEventListener('click',()=>$('standModal').classList.remove('show'));
+$('standModal').addEventListener('click',e=>{if(e.target===$('standModal'))$('standModal').classList.remove('show');});
+$('standNom').addEventListener('keydown',e=>{if(e.key==='Enter')$('standSave').click();});
+$('standSave').addEventListener('click',()=>{
+  const nom=$('standNom').value.trim();if(!nom)return;
+  const fete=getFete(curFeteId);if(!fete)return;if(!fete.stands)fete.stands=[];
+  if(editStandId){const s=getStand(fete,editStandId);if(s){s.nom=nom;s.emoji=selEmoji;}}
+  else{const{year,week}=getCurWY();fete.stands.push({id:'s'+uid(),nom,emoji:selEmoji,weeks:[emptyWeek(week,year)]});}
+  saveFete(fete);$('standModal').classList.remove('show');
+  if(editStandId&&curStandId===editStandId)renderStandView();else renderStands();
+  showToast(editStandId?'✓ Modifié':'✓ Stand ajouté');
+});
+
+// PAGE STAND
+function openStand(id){curStandId=id;curWIdx=0;renderStandView();}
+function renderStandView(){
+  const fete=getFete(curFeteId);if(!fete)return;
+  const stand=getStand(fete,curStandId);if(!stand)return;
+  if(!stand.weeks||!stand.weeks.length){const{year,week}=getCurWY();stand.weeks=[emptyWeek(week,year)];saveFete(fete);}
+  stand.weeks.sort((a,b)=>b.year-a.year||b.num-a.num);
+  setTopbar({back:'‹ Fête',backFn:goStands,title:`${stand.emoji||'🎯'} ${stand.nom}`,sub:`🎪 ${fete.nom}`,right:`<button class="ib" id="editStandBtn">✏️</button><button class="ib" id="delStandBtn" style="color:var(--red)">🗑</button>`});
+  $('editStandBtn').addEventListener('click',()=>openStandModal(curStandId));
+  $('delStandBtn').addEventListener('click',()=>{if(!confirm(`Supprimer "${stand.nom}" ?`))return;fete.stands=fete.stands.filter(s=>s.id!==curStandId);saveFete(fete);goStands();});
+  $('weekNavBar').style.display='block';
+  updWBadge(stand);
+  setPage('stand');
+  renderWeekGrid(stand);
+}
+
+function updWBadge(stand){if(!stand)return;const w=stand.weeks[curWIdx];$('wNum').textContent='S'+w.num;$('wYear').textContent=w.year;}
+
+$('prevW').addEventListener('click',()=>{const fete=getFete(curFeteId);const stand=getStand(fete,curStandId);if(!stand)return;if(curWIdx<stand.weeks.length-1){curWIdx++;updWBadge(stand);renderWeekGrid(stand);}else showToast('Première semaine');});
+$('nextW').addEventListener('click',()=>{const fete=getFete(curFeteId);const stand=getStand(fete,curStandId);if(!stand)return;if(curWIdx>0){curWIdx--;updWBadge(stand);renderWeekGrid(stand);}else showToast('Dernière semaine');});
+$('weekBadge').addEventListener('click',openWeekModal);
+$('addWeekBtnTop').addEventListener('click',openWeekModal);
+
+// MODAL SEMAINE
+function openWeekModal(){const fete=getFete(curFeteId);const stand=getStand(fete,curStandId);if(!stand)return;const{week,year}=getNextWeek(stand);$('wkNum').value=week;$('wkYear').value=year;$('weekModal').classList.add('show');setTimeout(()=>$('wkNum').focus(),200);}
+$('wkCancel').addEventListener('click',()=>$('weekModal').classList.remove('show'));
+$('weekModal').addEventListener('click',e=>{if(e.target===$('weekModal'))$('weekModal').classList.remove('show');});
+$('wkSave').addEventListener('click',()=>{
+  const num=parseInt($('wkNum').value),year=parseInt($('wkYear').value);
+  if(!num||!year||num<1||num>99){showToast('⚠ Numéro invalide');return;}
+  const fete=getFete(curFeteId);const stand=getStand(fete,curStandId);if(!stand)return;
+  if(!stand.weeks)stand.weeks=[];
+  const exists=stand.weeks.find(w=>w.num===num&&w.year===year);
+  if(exists){curWIdx=stand.weeks.findIndex(w=>w.id===exists.id);$('weekModal').classList.remove('show');updWBadge(stand);renderWeekGrid(stand);showToast('Semaine S'+num+' ouverte');return;}
+  const newW=emptyWeek(num,year);stand.weeks.push(newW);stand.weeks.sort((a,b)=>b.year-a.year||b.num-a.num);
+  curWIdx=stand.weeks.findIndex(w=>w.id===newW.id);
+  saveFete(fete);$('weekModal').classList.remove('show');updWBadge(stand);renderWeekGrid(stand);showToast('✓ Semaine S'+num+' ajoutée');
+});
+
+// SAISIE SEMAINE
+function getCurWeek(){const fete=getFete(curFeteId);const stand=getStand(fete,curStandId);if(!stand||!stand.weeks||!stand.weeks[curWIdx])return null;return stand.weeks[curWIdx];}
+function saveCurrentWeek(days,fees){const fete=getFete(curFeteId);const stand=getStand(fete,curStandId);if(!stand||!stand.weeks)return;if(days!==undefined)stand.weeks[curWIdx].days=days;if(fees!==undefined)stand.weeks[curWIdx].fees=fees;saveFete(fete);showToast();}
+
+function renderWeekGrid(stand){
+  const wk=getCurWeek();if(!wk)return;
+  const{dt,tCB,tCash,grand}=computeTotals(wk.days);const ti=todayI();
+  const grid=$('weekGrid');grid.innerHTML='';
+  DAYS.forEach((name,d)=>{
+    const t=dt[d];const card=document.createElement('div');card.className='day-card'+(d===ti?' today':'');
+    card.innerHTML=`<div class="card-head"><div class="cdn">${name}</div><input class="date-inp" data-d="${d}" type="text" placeholder="JJ/MM" maxlength="5" value="${wk.days[d].date||''}" autocomplete="off"></div>
+      <div class="card-body">
+        <div class="fg"><div class="fl cb">CB</div><input class="ai cb" data-d="${d}" data-f="cb" type="text" inputmode="decimal" placeholder="0,00" value="${wk.days[d].cb||''}" autocomplete="off"></div>
+        <div class="fg"><div class="fl cash">Espèces</div><input class="ai cash" data-d="${d}" data-f="cash" type="text" inputmode="decimal" placeholder="0,00" value="${wk.days[d].cash||''}" autocomplete="off"></div>
+        <div class="fg"><div class="fl tot">Total</div><div class="tbox ${t.total===0?'z':''}" id="tot${d}">${fmt(t.total)}</div></div>
+      </div>`;
+    grid.appendChild(card);
+  });
+  const tc=document.createElement('div');tc.className='tot-card';
+  tc.innerHTML=`<div class="card-head"><div class="cdn">Semaine</div></div><div class="card-body">
+    <div class="fg"><div class="fl cb">CB</div><div class="tbox ${tCB===0?'z':''}" id="wcb">${fmt(tCB)}</div></div>
+    <div class="fg"><div class="fl cash">Espèces</div><div class="tbox ${tCash===0?'z':''}" id="wcash">${fmt(tCash)}</div></div>
+    <div class="fg"><div class="fl tot">Total</div><div class="gbox ${grand===0?'z':''}" id="wgrand">${fmt(grand)}</div></div></div>`;
+  grid.appendChild(tc);
+  $('strip').innerHTML=`<div class="sc cb"><div class="sl">CB</div><div class="sv" id="sCB">${fmt(tCB)}</div></div><div class="sc cash"><div class="sl">Espèces</div><div class="sv" id="sCash">${fmt(tCash)}</div></div><div class="sc tot"><div class="sl">Total Brut</div><div class="sv" id="sGrand">${fmt(grand)}</div></div>`;
+  renderFees(grand,wk.fees||{place:'',courant:'',extra:'',extraLabel:''});
+  const cards=grid.querySelectorAll('.day-card');if(cards[ti])setTimeout(()=>cards[ti].scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'}),80);
+  grid.addEventListener('input',e=>{
+    const inp=e.target;const wk2=getCurWeek();if(!wk2)return;
+    if(inp.classList.contains('date-inp')){inp.value=fmtDate(inp.value);wk2.days[+inp.dataset.d].date=inp.value;saveCurrentWeek(wk2.days);return;}
+    if(inp.classList.contains('ai')){wk2.days[+inp.dataset.d][inp.dataset.f]=inp.value;saveCurrentWeek(wk2.days);const{dt:dt2,tCB:c,tCash:ca,grand:g}=computeTotals(wk2.days);recomp(dt2,c,ca,g);renderFees(g,wk2.fees||{});}
+  });
+}
+
+function recomp(dt,tCB,tCash,grand){
+  dt.forEach((t,d)=>{const el=$('tot'+d);if(el){el.textContent=fmt(t.total);el.className='tbox'+(t.total===0?' z':'');}});
+  const s=(id,v,c)=>{const el=$(id);if(el){el.textContent=fmt(v);el.className=c+(v===0?' z':'');}};
+  s('wcb',tCB,'tbox');s('wcash',tCash,'tbox');s('wgrand',grand,'gbox');
+  const a=$('sCB'),b=$('sCash'),c=$('sGrand');if(a)a.textContent=fmt(tCB);if(b)b.textContent=fmt(tCash);if(c)c.textContent=fmt(grand);
+}
+
+function renderFees(grand,fees){
+  const prov=grand*FEES_RATE,place=parseA(fees.place),courant=parseA(fees.courant),extra=parseA(fees.extra),net=grand-prov-place-courant-extra;
+  $('feesPanel').innerHTML=`<div class="fees-title">💰 Frais & bénéfice net</div>
+    <div class="fee-row"><div class="fee-label">Total brut</div><div class="fee-val" style="color:var(--gold)">${fmt(grand)}</div></div>
+    <div class="fee-row"><div class="fee-label">Provision <span class="fee-pct">33%</span></div><div class="fee-val" style="color:var(--red)">− ${fmt(prov)}</div></div>
+    <div class="fee-row"><div class="fee-label">Frais de place</div><input class="fee-inp" id="feePlace" type="text" inputmode="decimal" placeholder="0,00" value="${fees.place||''}"></div>
+    <div class="fee-row"><div class="fee-label">Frais de courant</div><input class="fee-inp" id="feeCourant" type="text" inputmode="decimal" placeholder="0,00" value="${fees.courant||''}"></div>
+    <div class="fee-row"><input class="fee-label-inp" id="feeExtraLabel" type="text" placeholder="Autre frais…" maxlength="30" value="${fees.extraLabel||''}"><input class="fee-inp" id="feeExtra" type="text" inputmode="decimal" placeholder="0,00" value="${fees.extra||''}"></div>
+    <hr class="fee-divider">
+    <div class="net-row"><div class="net-label">Bénéfice net</div><div class="net-val${net<0?' neg':''}" id="netVal">${fmt(net)}</div></div>`;
+  function upd(){const wk=getCurWeek();if(!wk)return;const nf={place:$('feePlace').value,courant:$('feeCourant').value,extra:$('feeExtra').value,extraLabel:$('feeExtraLabel').value};wk.fees=nf;saveCurrentWeek(undefined,nf);const{grand:g2}=computeTotals(wk.days);const net2=g2-g2*FEES_RATE-parseA(nf.place)-parseA(nf.courant)-parseA(nf.extra);const nv=$('netVal');if(nv){nv.textContent=fmt(net2);nv.className='net-val'+(net2<0?' neg':'');}}
+  ['feePlace','feeCourant','feeExtra','feeExtraLabel'].forEach(id=>{$(id).addEventListener('input',upd);});
+}
+
+$('resetBtn').addEventListener('click',()=>{
+  const wk=getCurWeek();if(!wk)return;if(!confirm(`Réinitialiser la semaine S${wk.num} — ${wk.year} ?`))return;
+  wk.days=DAYS.map(()=>({date:'',cb:'',cash:''}));wk.fees={place:'',courant:'',extra:'',extraLabel:''};
+  const fete=getFete(curFeteId);saveFete(fete);const stand=getStand(fete,curStandId);renderWeekGrid(stand);showToast('↺ Réinitialisée');
+});
+
+// ═══════════════════════════════════════
+// IMPRESSION — Modal sélection semaines
+// ═══════════════════════════════════════
+$('printStandBtn').addEventListener('click',openPrintModal);
+$('printCancel').addEventListener('click',()=>$('printModal').classList.remove('show'));
+$('printModal').addEventListener('click',e=>{if(e.target===$('printModal'))$('printModal').classList.remove('show');});
+
+function openPrintModal(){
+  const fete=getFete(curFeteId);const stand=getStand(fete,curStandId);if(!stand||!stand.weeks||!stand.weeks.length){showToast('Aucune semaine à imprimer');return;}
+  const weeks=[...stand.weeks].sort((a,b)=>a.year-b.year||a.num-b.num);
+  // Par défaut tout sélectionner
+  selectedWeekIds=new Set(weeks.map(w=>w.id));
+  renderWeekSelectList(weeks);
+  $('printModal').classList.add('show');
+}
+
+function renderWeekSelectList(weeks){
+  let h='';
+  weeks.forEach(wk=>{
+    const{tCB,tCash,grand}=computeTotals(wk.days);
+    const net=grand-grand*FEES_RATE-parseA(wk.fees?.place)-parseA(wk.fees?.courant)-parseA(wk.fees?.extra);
+    const sel=selectedWeekIds.has(wk.id);
+    const dates=wk.days.map(d=>d.date).filter(Boolean);
+    const dateRange=dates.length?`${dates[0]}${dates.length>1?' → '+dates[dates.length-1]:''}` :'Pas de dates';
+    h+=`<div class="week-select-item${sel?' selected':''}" data-wid="${wk.id}">
+      <div class="wsi-check">${sel?'✓':''}</div>
+      <div class="wsi-info">
+        <div class="wsi-title">Semaine ${wk.num} — ${wk.year}</div>
+        <div class="wsi-sub">${dateRange} · Net : ${fmt(net)}</div>
+      </div>
+      <div class="wsi-total">${fmt(grand)}</div>
+    </div>`;
+  });
+  $('weekSelectList').innerHTML=h;
+
+  // Résumé dynamique
+  let sumCB=0,sumCash=0,sumGrand=0,sumNet=0;
+  weeks.filter(w=>selectedWeekIds.has(w.id)).forEach(wk=>{
+    const{tCB,tCash,grand}=computeTotals(wk.days);
+    sumCB+=tCB;sumCash+=tCash;sumGrand+=grand;
+    sumNet+=grand-grand*FEES_RATE-parseA(wk.fees?.place)-parseA(wk.fees?.courant)-parseA(wk.fees?.extra);
+  });
+  const n=selectedWeekIds.size;
+  const sum=$('printSummary');
+  if(n>0){
+    sum.style.display='block';
+    $('printSumTitle').textContent=`Résumé — ${n} semaine${n>1?'s':''} sélectionnée${n>1?'s':''}`;
+    $('printSumCB').textContent=fmt(sumCB);
+    $('printSumCash').textContent=fmt(sumCash);
+    $('printSumGrand').textContent=fmt(sumGrand);
+    $('printSumNet').textContent=fmt(sumNet);
+  } else {
+    sum.style.display='none';
+  }
+
+  $('weekSelectList').querySelectorAll('.week-select-item').forEach(item=>{
+    item.addEventListener('click',()=>{
+      const wid=item.dataset.wid;
+      if(selectedWeekIds.has(wid))selectedWeekIds.delete(wid);else selectedWeekIds.add(wid);
+      const fete=getFete(curFeteId);const stand=getStand(fete,curStandId);
+      renderWeekSelectList([...stand.weeks].sort((a,b)=>a.year-b.year||a.num-b.num));
+    });
+  });
+}
+
+$('selectAllBtn').addEventListener('click',()=>{
+  const fete=getFete(curFeteId);const stand=getStand(fete,curStandId);if(!stand)return;
+  const weeks=stand.weeks;
+  if(selectedWeekIds.size===weeks.length)selectedWeekIds=new Set();
+  else selectedWeekIds=new Set(weeks.map(w=>w.id));
+  renderWeekSelectList([...weeks].sort((a,b)=>a.year-b.year||a.num-b.num));
+});
+
+$('printConfirm').addEventListener('click',()=>{
+  if(selectedWeekIds.size===0){showToast('⚠ Sélectionne au moins une semaine');return;}
+  $('printModal').classList.remove('show');
+  buildPrint();
+  $('print-ov').classList.add('show');
+});
+$('closePrint').addEventListener('click',()=>$('print-ov').classList.remove('show'));
+
+function buildPrint(){
+  const fete=getFete(curFeteId);const stand=getStand(fete,curStandId);if(!fete||!stand)return;
+  const allWeeks=[...stand.weeks].sort((a,b)=>a.year-b.year||a.num-b.num);
+  const weeks=allWeeks.filter(w=>selectedWeekIds.has(w.id));
+  if(!weeks.length)return;
+
+  let totalCB=0,totalCash=0,totalGrand=0,totalPlace=0,totalCourant=0,totalExtra=0,extraLabel='Autres frais';
+
+  let weeksHTML='';
+  weeks.forEach(wk=>{
+    const{dt,tCB,tCash,grand}=computeTotals(wk.days);
+    totalCB+=tCB;totalCash+=tCash;totalGrand+=grand;
+    totalPlace+=parseA(wk.fees?.place);totalCourant+=parseA(wk.fees?.courant);totalExtra+=parseA(wk.fees?.extra);
+    if(wk.fees?.extraLabel)extraLabel=wk.fees.extraLabel;
+    const wProv=grand*FEES_RATE,wPlace=parseA(wk.fees?.place),wCourant=parseA(wk.fees?.courant),wExtra=parseA(wk.fees?.extra);
+    const wNet=grand-wProv-wPlace-wCourant-wExtra;
+    let rows='';
+    DAYS.forEach((name,d)=>{
+      const t=dt[d];
+      rows+=`<tr><td class="td-day">${name}${wk.days[d].date?' — '+wk.days[d].date:''}</td>
+        <td class="td-num ${t.cb===0?'td-z':''}">${t.cb>0?fmt(t.cb):'—'}</td>
+        <td class="td-num ${t.cash===0?'td-z':''}">${t.cash>0?fmt(t.cash):'—'}</td>
+        <td class="td-tot ${t.total===0?'td-z':''}">${t.total>0?fmt(t.total):'—'}</td></tr>`;
+    });
+    weeksHTML+=`<div class="p-week-block">
+      <div class="p-week-title">Semaine ${wk.num} — ${wk.year}</div>
+      <div class="p-week-summary">
+        <div class="p-ws"><div class="p-ws-l">CB</div><div class="p-ws-v" style="color:#2563eb">${fmt(tCB)}</div></div>
+        <div class="p-ws"><div class="p-ws-l">Espèces</div><div class="p-ws-v" style="color:#059669">${fmt(tCash)}</div></div>
+        <div class="p-ws"><div class="p-ws-l">Total brut</div><div class="p-ws-v" style="color:#b45309">${fmt(grand)}</div></div>
+        <div class="p-ws"><div class="p-ws-l">Net sem.</div><div class="p-ws-v" style="color:#16a34a">${fmt(wNet)}</div></div>
+      </div>
+      <table class="ptbl">
+        <thead><tr><th style="text-align:left;padding-left:10px">Jour</th><th>CB</th><th>Espèces</th><th class="th-tot">Total</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>`;
+  });
+
+  const totalProv=totalGrand*FEES_RATE;
+  const totalNet=totalGrand-totalProv-totalPlace-totalCourant-totalExtra;
+  const printed=new Date().toLocaleDateString('fr-FR',{day:'2-digit',month:'long',year:'numeric'});
+  const dateStr=fete.debut&&fete.fin?`${fete.debut} → ${fete.fin}`:'';
+
+  $('printTitle').textContent=`${stand.emoji||'🎯'} ${stand.nom} — ${weeks.length} semaine${weeks.length!==1?'s':''}`;
+
+  $('printSheet').innerHTML=`
+    <div class="p-header">
+      <div>
+        <div class="p-title">Recettes<span> Pro</span></div>
+        <div class="p-sub">${stand.emoji||'🎯'} ${stand.nom}</div>
+        <div style="font-size:.72rem;color:#555;margin-top:3px">🎪 ${fete.nom}${fete.ville?' · 📍'+fete.ville:''}</div>
+      </div>
+      <div class="p-meta">
+        <strong>${weeks.length} semaine${weeks.length!==1?'s':''} sélectionnée${weeks.length!==1?'s':''}</strong><br>
+        ${dateStr?`📅 ${dateStr}<br>`:''}
+        Imprimé le ${printed}
+      </div>
+    </div>
+
+    <div class="p-summary">
+      <div class="p-sc cb"><div class="p-sl">Total CB</div><div class="p-sv">${fmt(totalCB)}</div></div>
+      <div class="p-sc cash"><div class="p-sl">Total Espèces</div><div class="p-sv">${fmt(totalCash)}</div></div>
+      <div class="p-sc tot"><div class="p-sl">Total Brut</div><div class="p-sv">${fmt(totalGrand)}</div></div>
+      <div class="p-sc net"><div class="p-sl">Bénéfice Net</div><div class="p-sv">${fmt(totalNet)}</div></div>
+    </div>
+
+    ${weeksHTML}
+
+    <div class="p-fees-block">
+      <div class="p-fees-title">Récapitulatif des frais — ${weeks.length} semaine${weeks.length!==1?'s':''}</div>
+      <div class="p-fee-row"><span class="pk">Total brut</span><span class="pv" style="color:#b45309">${fmt(totalGrand)}</span></div>
+      <div class="p-fee-row"><span class="pk">Provision 33%</span><span class="pv" style="color:#dc2626">− ${fmt(totalProv)}</span></div>
+      <div class="p-fee-row"><span class="pk">Frais de place</span><span class="pv" style="color:#ea580c">− ${fmt(totalPlace)}</span></div>
+      <div class="p-fee-row"><span class="pk">Frais de courant</span><span class="pv" style="color:#ea580c">− ${fmt(totalCourant)}</span></div>
+      ${totalExtra>0?`<div class="p-fee-row"><span class="pk">${extraLabel}</span><span class="pv" style="color:#ea580c">− ${fmt(totalExtra)}</span></div>`:''}
+      <div class="p-fee-row net"><span class="pk">Bénéfice net total</span><span class="pv">${fmt(totalNet)}</span></div>
+      <div class="p-fee-sub">Total frais déduits : ${fmt(totalProv+totalPlace+totalCourant+totalExtra)}</div>
+    </div>
+
+    <div class="p-footer">
+      <span>${stand.emoji||'🎯'} ${stand.nom} — 🎪 ${fete.nom}</span>
+      <span>${weeks.length} semaine${weeks.length!==1?'s':''} · ${printed}</span>
+    </div>`;
+}
+
+document.addEventListener('visibilitychange',()=>{if(document.hidden){clearTimeout(window._bgL);window._bgL=setTimeout(()=>{if(isUnlocked)showLock();},30000);}else clearTimeout(window._bgL);});
+
+if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('service-worker.js').catch(e=>console.log('SW:',e)));}
+const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent);
+const isStandalone=window.navigator.standalone===true||window.matchMedia('(display-mode: standalone)').matches;
+if(isIOS&&!isStandalone&&!localStorage.getItem('rp_ios_hint')){setTimeout(()=>$('ios-hint').classList.add('show'),3000);}
+$('hintClose').addEventListener('click',()=>{$('ios-hint').classList.remove('show');localStorage.setItem('rp_ios_hint','1');});
+
+async function init(){
+  const hash=getLocalHash();
+  if(hash){dataRowId=hash;await loadFromCloud();$('loading').style.display='none';$('lock-screen').style.display='flex';}
+  else{$('loading').style.display='none';$('setup-screen').style.display='flex';}
+}
+init();
+</script>
+</body>
+</html>
