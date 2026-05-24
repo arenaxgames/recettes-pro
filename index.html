@@ -78,7 +78,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .wb-num{font-size:1rem;font-weight:800}
 .wb-year{font-size:.56rem;color:var(--dim)}
 
-/* Barre d'actions impression dans le stand */
 .stand-action-bar{display:flex;gap:8px;padding:8px 11px;background:var(--surf);border-bottom:1px solid var(--bdr);flex-shrink:0}
 .action-btn{flex:1;padding:8px 10px;border:none;border-radius:9px;font-size:.74rem;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:5px}
 .action-btn.print{background:rgba(91,143,247,.12);border:1px solid rgba(91,143,247,.3);color:var(--blue)}
@@ -137,7 +136,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .mbtn.pri{background:var(--blue);color:#fff}.mbtn.pri:active{opacity:.85}
 .mbtn.sec{background:var(--surf2);border:1px solid var(--bdr);color:var(--dim2)}
 
-/* MODAL IMPRESSION */
 .print-modal-box{background:var(--surf);border-radius:20px 20px 0 0;border:1px solid var(--bdr);width:100%;max-width:500px;padding:20px 16px max(20px,env(safe-area-inset-bottom))}
 .week-select-list{display:flex;flex-direction:column;gap:6px;max-height:300px;overflow-y:auto;margin-bottom:14px}
 .week-select-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--surf2);border:1px solid var(--bdr);border-radius:9px;cursor:pointer}
@@ -180,22 +178,31 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .sv{font-size:.88rem;font-weight:700}
 .sc.cb .sv{color:var(--blue)}.sc.cash .sv{color:var(--green)}.sc.tot .sv{color:var(--gold)}
 
+/* FEES PANEL */
 .fees-panel{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r);padding:13px;margin-bottom:11px}
 .fees-title{font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin-bottom:11px}
-.fee-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;gap:8px}
-.fee-label{font-size:.74rem;color:var(--txt);flex:1}
-.fee-pct{font-size:.62rem;color:var(--dim);background:var(--surf2);border-radius:4px;padding:2px 5px;margin-left:4px}
-.fee-val{font-size:.84rem;font-weight:700;text-align:right;min-width:80px}
-.fee-inp{background:var(--surf2);border:1px solid var(--bdr);border-radius:7px;color:var(--txt);font-size:.84rem;padding:5px 8px;width:100px;text-align:right;outline:none;font-family:inherit;-webkit-appearance:none}
+.fee-inp{background:var(--surf2);border:1px solid var(--bdr);border-radius:7px;color:var(--txt);font-size:.84rem;padding:5px 8px;width:90px;text-align:right;outline:none;font-family:inherit;-webkit-appearance:none}
 .fee-inp:focus{border-color:var(--orange)}
-.fee-label-inp{background:transparent;border:none;border-bottom:1px dashed var(--bdr2);color:var(--txt);font-size:.74rem;outline:none;font-family:inherit;flex:1;padding:2px 0;min-width:0}
-.fee-label-inp::placeholder{color:var(--dim)}
-.fee-label-inp:focus{border-bottom-color:var(--orange)}
-.fee-divider{border:none;border-top:1px solid var(--bdr);margin:8px 0}
-.net-row{display:flex;align-items:center;justify-content:space-between;padding-top:2px}
-.net-label{font-size:.8rem;font-weight:700;color:var(--green)}
+.fee-pct{font-size:.62rem;color:var(--dim);background:var(--surf2);border-radius:4px;padding:2px 5px;margin-left:4px}
 .net-val{font-size:1.1rem;font-weight:800;color:var(--green)}
 .net-val.neg{color:var(--red)}
+
+/* FEES CALC BLOCK — nouveau design détaillé */
+.fcb-row{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--bdr)}
+.fcb-label{font-size:.74rem;color:var(--txt);flex:1}
+.fcb-val{font-size:.86rem;font-weight:700;text-align:right;min-width:100px;flex-shrink:0}
+.fcb-val.gold{color:var(--gold)}
+.fcb-val.red{color:var(--red)}
+.fcb-brut{background:rgba(232,162,48,.05);border-radius:8px;padding:8px 8px;margin-bottom:6px;border:none!important}
+.fcb-sep{font-size:.56rem;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--dim);text-align:center;padding:5px 0;margin:2px 0}
+.fcb-input-row{border-bottom:1px solid var(--bdr);padding:5px 0}
+.fcb-input-row .fcb-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.fcb-total-deduc{background:rgba(224,90,90,.07);border-radius:7px;padding:7px 8px;margin-top:6px;border:none!important}
+.fcb-total-deduc .fcb-label{font-weight:700;color:var(--red);font-size:.76rem}
+.fcb-result{background:linear-gradient(135deg,rgba(46,201,140,.14),rgba(46,201,140,.06));border:1.5px solid rgba(46,201,140,.35);border-radius:12px;padding:13px 14px;margin-top:10px;display:flex;align-items:center;justify-content:space-between}
+.fcb-result-label{font-size:.68rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--green)}
+.fcb-result .net-val{font-size:1.35rem}
+
 .reset-btn{display:block;width:100%;background:transparent;border:1px solid var(--bdr);border-radius:9px;color:var(--dim2);font-size:.72rem;font-family:inherit;padding:9px;cursor:pointer;text-align:center;margin-top:4px}
 .reset-btn:active{background:var(--surf2)}
 .empty{text-align:center;padding:40px 18px;color:var(--dim2);font-size:.78rem}
@@ -300,7 +307,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
       </div>
       <button class="nav-btn" id="nextW">›</button>
     </div>
-    <!-- Barre actions stand -->
     <div class="stand-action-bar">
       <button class="action-btn week" id="addWeekBtnTop">＋ Nouvelle semaine</button>
       <button class="action-btn print" id="printStandBtn">🖨 Imprimer le stand</button>
@@ -367,7 +373,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   </div>
 </div>
 
-<!-- MODAL IMPRESSION — sélection des semaines -->
+<!-- MODAL IMPRESSION -->
 <div class="modal-ov" id="printModal">
   <div class="modal-box">
     <div class="modal-title">🖨 Choisir les semaines à imprimer</div>
@@ -414,15 +420,36 @@ let appData={fetes:[]};
 let selectedWeekIds=new Set();
 
 const $=id=>document.getElementById(id);
-const fmt=v=>v===0?'0,00 €':v.toLocaleString('fr-FR',{minimumFractionDigits:2,maximumFractionDigits:2})+' €';
-const parseA=s=>{const v=parseFloat(String(s||'').replace(',','.'));return isNaN(v)?0:v;};
+
+// ─── FIXES CALCUL ──────────────────────────────────────────
+// parseA : nettoie tous les espaces (y compris insécables français \u00a0 \u202f)
+// avant de parser → plus jamais de 0 sur un montant valide
+const parseA=s=>{
+  const clean=String(s||'').replace(/[\s\u00a0\u202f]/g,'').replace(',','.');
+  const v=parseFloat(clean);
+  return isNaN(v)||!isFinite(v)?0:v;
+};
+// fmt : arrondi propre avant formatage → 100*33% = 33,00 € exact
+const fmt=v=>{
+  const n=Math.round(v*100)/100;
+  return n.toLocaleString('fr-FR',{minimumFractionDigits:2,maximumFractionDigits:2})+' €';
+};
+// calcNet : fonction centrale unique pour tous les calculs
+function calcNet(grand,fees){
+  const prov=Math.round(grand*FEES_RATE*100)/100;
+  const place=parseA(fees.place),courant=parseA(fees.courant),employe=parseA(fees.employe);
+  const net=Math.round((grand-prov-place-courant-employe)*100)/100;
+  return{prov,place,courant,employe,net};
+}
+// ───────────────────────────────────────────────────────────
+
 const fmtDate=r=>{let v=r.replace(/\D/g,'');if(v.length>=3)v=v.slice(0,2)+'/'+v.slice(2,4);return v;};
 function todayI(){const d=new Date().getDay();return d===0?6:d-1;}
 function showToast(m='✓ Sauvegardé'){$('toast').textContent=m;$('toast').classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>$('toast').classList.remove('show'),1800);}
 function setPage(n){document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id==='page-'+n));}
 function computeTotals(days){let tCB=0,tCash=0;const dt=days.map(d=>{const cb=parseA(d.cb),cash=parseA(d.cash);tCB+=cb;tCash+=cash;return{cb,cash,total:cb+cash};});return{dt,tCB,tCash,grand:tCB+tCash};}
 function uid(){return Date.now()+'_'+Math.random().toString(36).slice(2);}
-function emptyWeek(num,year){return{id:'w'+uid(),num,year,days:DAYS.map(()=>({date:'',cb:'',cash:''})),fees:{place:'',courant:'',extra:'',extraLabel:''}};}
+function emptyWeek(num,year){return{id:'w'+uid(),num,year,days:DAYS.map(()=>({date:'',cb:'',cash:''})),fees:{place:'',courant:'',employe:''}};}
 function getCurWY(){const n=new Date(),d1=new Date(n.getFullYear(),0,1);return{year:n.getFullYear(),week:Math.ceil(((n-d1)/86400000+d1.getDay()+1)/7)};}
 function getNextWeek(stand){
   if(stand&&stand.weeks&&stand.weeks.length){const s=[...stand.weeks].sort((a,b)=>b.year-a.year||b.num-a.num);let{num,year}=s[0];num++;if(num>52){num=1;year++;}return{week:num,year};}
@@ -441,7 +468,7 @@ async function loadFromCloud(){if(!dataRowId)return;try{const data=await supaGet
 function scheduleSave(){clearTimeout(saveT);saveT=setTimeout(async()=>{showSync('syncing');try{await supaUpsert(appData);showSync('ok');setTimeout(hideSync,2000);}catch(e){console.error('Save:',e);showSync('err');setTimeout(hideSync,4000);}},600);}
 function showSync(t){const b=$('sync-bar');b.className='show '+t;$('syncText').textContent={syncing:'Synchronisation…',ok:'✓ Synchronisé',err:'⚠ Erreur de sauvegarde'}[t];}
 function hideSync(){$('sync-bar').className='';}
-function startPolling(){clearInterval(pollT);pollT=setInterval(async()=>{if(!isUnlocked||!dataRowId)return;try{const data=await supaGet();if(data&&typeof data==='object'){appData=data;if(!Array.isArray(appData.fetes))appData.fetes=[];if(curStandId)renderStandView();else if(curFeteId)renderStands();else renderFetes();}}catch(e){}},30000);}
+function startPolling(){clearInterval(pollT);pollT=setInterval(async()=>{if(!isUnlocked||!dataRowId)return;try{const data=await supaGet();if(data&&typeof data==='object'){appData=data;if(!Array.isArray(appData.fetes))appData.fetes=[];if(curStandId)renderWeekGrid(getStand(getFete(curFeteId),curStandId));else if(curFeteId)renderStands();else renderFetes();}}catch(e){}},30000);}
 
 // DATA
 function getFetes(){return appData.fetes||[];}
@@ -538,12 +565,17 @@ function renderStands(){
     h+='<div class="sec-title">Stands de cette fête</div><div class="card-list">';
     stands.forEach(s=>{
       let totalGrand=0,totalNet=0;
-      (s.weeks||[]).forEach(w=>{const{grand}=computeTotals(w.days);totalGrand+=grand;totalNet+=grand-grand*FEES_RATE-parseA(w.fees?.place)-parseA(w.fees?.courant)-parseA(w.fees?.extra);});
+      (s.weeks||[]).forEach(w=>{
+        const{grand}=computeTotals(w.days);
+        totalGrand+=grand;
+        const{net}=calcNet(grand,w.fees||{});
+        totalNet+=net;
+      });
       h+=`<div class="stand-card" data-id="${s.id}">
         <div class="stand-icon">${s.emoji||'🎯'}</div>
         <div class="stand-info">
           <div class="stand-name">${s.nom}</div>
-          <div class="stand-meta">${(s.weeks||[]).length} semaine${(s.weeks||[]).length!==1?'s':''} · Net : ${totalNet>0?fmt(totalNet):'—'}</div>
+          <div class="stand-meta">${(s.weeks||[]).length} semaine${(s.weeks||[]).length!==1?'s':''} · Net : ${totalNet!==0?fmt(totalNet):'—'}</div>
         </div>
         <div class="stand-total"><div class="stand-total-v">${totalGrand>0?fmt(totalGrand):'—'}</div><div class="stand-total-l">Brut</div></div>
       </div>`;
@@ -637,7 +669,10 @@ function renderWeekGrid(stand){
     <div class="fg"><div class="fl tot">Total</div><div class="gbox ${grand===0?'z':''}" id="wgrand">${fmt(grand)}</div></div></div>`;
   grid.appendChild(tc);
   $('strip').innerHTML=`<div class="sc cb"><div class="sl">CB</div><div class="sv" id="sCB">${fmt(tCB)}</div></div><div class="sc cash"><div class="sl">Espèces</div><div class="sv" id="sCash">${fmt(tCash)}</div></div><div class="sc tot"><div class="sl">Total Brut</div><div class="sv" id="sGrand">${fmt(grand)}</div></div>`;
-  renderFees(grand,wk.fees||{place:'',courant:'',extra:'',extraLabel:''});
+  // Migrer anciens fees sans employe
+  const fees=wk.fees||{};
+  if(fees.employe===undefined)fees.employe='';
+  renderFees(grand,fees);
   const cards=grid.querySelectorAll('.day-card');if(cards[ti])setTimeout(()=>cards[ti].scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'}),80);
   grid.addEventListener('input',e=>{
     const inp=e.target;const wk2=getCurWeek();if(!wk2)return;
@@ -653,29 +688,74 @@ function recomp(dt,tCB,tCash,grand){
   const a=$('sCB'),b=$('sCash'),c=$('sGrand');if(a)a.textContent=fmt(tCB);if(b)b.textContent=fmt(tCash);if(c)c.textContent=fmt(grand);
 }
 
+// ─── NOUVEAU renderFees : détail visuel complet + calcul propre ───
 function renderFees(grand,fees){
-  const prov=grand*FEES_RATE,place=parseA(fees.place),courant=parseA(fees.courant),extra=parseA(fees.extra),net=grand-prov-place-courant-extra;
-  $('feesPanel').innerHTML=`<div class="fees-title">💰 Frais & bénéfice net</div>
-    <div class="fee-row"><div class="fee-label">Total brut</div><div class="fee-val" style="color:var(--gold)">${fmt(grand)}</div></div>
-    <div class="fee-row"><div class="fee-label">Provision <span class="fee-pct">33%</span></div><div class="fee-val" style="color:var(--red)">− ${fmt(prov)}</div></div>
-    <div class="fee-row"><div class="fee-label">Frais de place</div><input class="fee-inp" id="feePlace" type="text" inputmode="decimal" placeholder="0,00" value="${fees.place||''}"></div>
-    <div class="fee-row"><div class="fee-label">Frais de courant</div><input class="fee-inp" id="feeCourant" type="text" inputmode="decimal" placeholder="0,00" value="${fees.courant||''}"></div>
-    <div class="fee-row"><input class="fee-label-inp" id="feeExtraLabel" type="text" placeholder="Autre frais…" maxlength="30" value="${fees.extraLabel||''}"><input class="fee-inp" id="feeExtra" type="text" inputmode="decimal" placeholder="0,00" value="${fees.extra||''}"></div>
-    <hr class="fee-divider">
-    <div class="net-row"><div class="net-label">Bénéfice net</div><div class="net-val${net<0?' neg':''}" id="netVal">${fmt(net)}</div></div>`;
-  function upd(){const wk=getCurWeek();if(!wk)return;const nf={place:$('feePlace').value,courant:$('feeCourant').value,extra:$('feeExtra').value,extraLabel:$('feeExtraLabel').value};wk.fees=nf;saveCurrentWeek(undefined,nf);const{grand:g2}=computeTotals(wk.days);const net2=g2-g2*FEES_RATE-parseA(nf.place)-parseA(nf.courant)-parseA(nf.extra);const nv=$('netVal');if(nv){nv.textContent=fmt(net2);nv.className='net-val'+(net2<0?' neg':'');}}
-  ['feePlace','feeCourant','feeExtra','feeExtraLabel'].forEach(id=>{$(id).addEventListener('input',upd);});
+  const{prov,place,courant,employe,net}=calcNet(grand,fees);
+  const tot=prov+place+courant+employe;
+  $('feesPanel').innerHTML=`
+<div class="fees-title">💰 Détail des frais & bénéfice net</div>
+<div class="fcb-row fcb-brut">
+  <div class="fcb-label" style="font-weight:700">Total brut</div>
+  <div class="fcb-val gold">${fmt(grand)}</div>
+</div>
+<div class="fcb-sep">▼ Déductions</div>
+<div class="fcb-row">
+  <div class="fcb-label">Provision 33% <span class="fee-pct">obligatoire</span></div>
+  <div class="fcb-val red" id="calcProv">− ${fmt(prov)}</div>
+</div>
+<div class="fcb-row fcb-input-row">
+  <div class="fcb-label">Frais de place</div>
+  <div class="fcb-right"><input class="fee-inp" id="feePlace" type="text" inputmode="decimal" placeholder="0,00" value="${fees.place||''}"><span class="fcb-val red" id="calcPlace">${place>0?'− '+fmt(place):'—'}</span></div>
+</div>
+<div class="fcb-row fcb-input-row">
+  <div class="fcb-label">Frais de courant</div>
+  <div class="fcb-right"><input class="fee-inp" id="feeCourant" type="text" inputmode="decimal" placeholder="0,00" value="${fees.courant||''}"><span class="fcb-val red" id="calcCourant">${courant>0?'− '+fmt(courant):'—'}</span></div>
+</div>
+<div class="fcb-row fcb-input-row">
+  <div class="fcb-label">Employé</div>
+  <div class="fcb-right"><input class="fee-inp" id="feeEmploye" type="text" inputmode="decimal" placeholder="0,00" value="${fees.employe||''}"><span class="fcb-val red" id="calcEmploye">${employe>0?'− '+fmt(employe):'—'}</span></div>
+</div>
+<div class="fcb-row fcb-total-deduc">
+  <div class="fcb-label">Total déduit</div>
+  <div class="fcb-val red" id="totalDeduc">− ${fmt(tot)}</div>
+</div>
+<div class="fcb-result">
+  <div class="fcb-result-label">= Bénéfice net</div>
+  <div class="net-val${net<0?' neg':''}" id="netVal">${fmt(net)}</div>
+</div>`;
+  // Listener unique qui relit TOUS les champs ensemble
+  function updFees(){
+    const wk=getCurWeek();if(!wk)return;
+    const newFees={
+      place:$('feePlace')?$('feePlace').value:'',
+      courant:$('feeCourant')?$('feeCourant').value:'',
+      employe:$('feeEmploye')?$('feeEmploye').value:''
+    };
+    wk.fees=newFees;saveCurrentWeek(undefined,newFees);
+    const{grand:g2}=computeTotals(wk.days);
+    const{prov:p2,place:pl2,courant:c2,employe:e2,net:n2}=calcNet(g2,newFees);
+    const tot2=p2+pl2+c2+e2;
+    const set=(id,v)=>{const el=$(id);if(el)el.textContent=v;};
+    set('calcProv','− '+fmt(p2));
+    set('calcPlace',pl2>0?'− '+fmt(pl2):'—');
+    set('calcCourant',c2>0?'− '+fmt(c2):'—');
+    set('calcEmploye',e2>0?'− '+fmt(e2):'—');
+    set('totalDeduc','− '+fmt(tot2));
+    const nv=$('netVal');if(nv){nv.textContent=fmt(n2);nv.className='net-val'+(n2<0?' neg':'');}
+  }
+  ['feePlace','feeCourant','feeEmploye'].forEach(id=>{
+    const el=$(id);if(el)el.addEventListener('input',updFees);
+  });
 }
+// ─────────────────────────────────────────────────────────────────
 
 $('resetBtn').addEventListener('click',()=>{
   const wk=getCurWeek();if(!wk)return;if(!confirm(`Réinitialiser la semaine S${wk.num} — ${wk.year} ?`))return;
-  wk.days=DAYS.map(()=>({date:'',cb:'',cash:''}));wk.fees={place:'',courant:'',extra:'',extraLabel:''};
+  wk.days=DAYS.map(()=>({date:'',cb:'',cash:''}));wk.fees={place:'',courant:'',employe:''};
   const fete=getFete(curFeteId);saveFete(fete);const stand=getStand(fete,curStandId);renderWeekGrid(stand);showToast('↺ Réinitialisée');
 });
 
-// ═══════════════════════════════════════
-// IMPRESSION — Modal sélection semaines
-// ═══════════════════════════════════════
+// ═══ IMPRESSION ═══
 $('printStandBtn').addEventListener('click',openPrintModal);
 $('printCancel').addEventListener('click',()=>$('printModal').classList.remove('show'));
 $('printModal').addEventListener('click',e=>{if(e.target===$('printModal'))$('printModal').classList.remove('show');});
@@ -683,7 +763,6 @@ $('printModal').addEventListener('click',e=>{if(e.target===$('printModal'))$('pr
 function openPrintModal(){
   const fete=getFete(curFeteId);const stand=getStand(fete,curStandId);if(!stand||!stand.weeks||!stand.weeks.length){showToast('Aucune semaine à imprimer');return;}
   const weeks=[...stand.weeks].sort((a,b)=>a.year-b.year||a.num-b.num);
-  // Par défaut tout sélectionner
   selectedWeekIds=new Set(weeks.map(w=>w.id));
   renderWeekSelectList(weeks);
   $('printModal').classList.add('show');
@@ -692,10 +771,10 @@ function openPrintModal(){
 function renderWeekSelectList(weeks){
   let h='';
   weeks.forEach(wk=>{
-    const{tCB,tCash,grand}=computeTotals(wk.days);
-    const net=grand-grand*FEES_RATE-parseA(wk.fees?.place)-parseA(wk.fees?.courant)-parseA(wk.fees?.extra);
+    const{grand}=computeTotals(wk.days);
+    const fees=wk.fees||{};if(fees.employe===undefined)fees.employe='';
+    const{net}=calcNet(grand,fees);
     const sel=selectedWeekIds.has(wk.id);
-    // Trouve les dates non vides pour afficher
     const dates=wk.days.map(d=>d.date).filter(Boolean);
     const dateRange=dates.length?`${dates[0]}${dates.length>1?' → '+dates[dates.length-1]:''}` :'';
     h+=`<div class="week-select-item${sel?' selected':''}" data-wid="${wk.id}">
@@ -740,16 +819,15 @@ function buildPrint(){
   const weeks=allWeeks.filter(w=>selectedWeekIds.has(w.id));
   if(!weeks.length)return;
 
-  let totalCB=0,totalCash=0,totalGrand=0,totalPlace=0,totalCourant=0,totalExtra=0,extraLabel='Autres frais';
+  let totalCB=0,totalCash=0,totalGrand=0,totalProv=0,totalPlace=0,totalCourant=0,totalEmploye=0;
 
   let weeksHTML='';
   weeks.forEach(wk=>{
     const{dt,tCB,tCash,grand}=computeTotals(wk.days);
+    const fees=wk.fees||{};if(fees.employe===undefined)fees.employe='';
+    const{prov,place,courant,employe,net}=calcNet(grand,fees);
     totalCB+=tCB;totalCash+=tCash;totalGrand+=grand;
-    totalPlace+=parseA(wk.fees?.place);totalCourant+=parseA(wk.fees?.courant);totalExtra+=parseA(wk.fees?.extra);
-    if(wk.fees?.extraLabel)extraLabel=wk.fees.extraLabel;
-    const wProv=grand*FEES_RATE,wPlace=parseA(wk.fees?.place),wCourant=parseA(wk.fees?.courant),wExtra=parseA(wk.fees?.extra);
-    const wNet=grand-wProv-wPlace-wCourant-wExtra;
+    totalProv+=prov;totalPlace+=place;totalCourant+=courant;totalEmploye+=employe;
     let rows='';
     DAYS.forEach((name,d)=>{
       const t=dt[d];
@@ -763,8 +841,12 @@ function buildPrint(){
       <div class="p-week-summary">
         <div class="p-ws"><div class="p-ws-l">CB</div><div class="p-ws-v" style="color:#2563eb">${fmt(tCB)}</div></div>
         <div class="p-ws"><div class="p-ws-l">Espèces</div><div class="p-ws-v" style="color:#059669">${fmt(tCash)}</div></div>
-        <div class="p-ws"><div class="p-ws-l">Total brut</div><div class="p-ws-v" style="color:#b45309">${fmt(grand)}</div></div>
-        <div class="p-ws"><div class="p-ws-l">Net sem.</div><div class="p-ws-v" style="color:#16a34a">${fmt(wNet)}</div></div>
+        <div class="p-ws"><div class="p-ws-l">Brut</div><div class="p-ws-v" style="color:#b45309">${fmt(grand)}</div></div>
+        <div class="p-ws"><div class="p-ws-l">Provision 33%</div><div class="p-ws-v" style="color:#dc2626">− ${fmt(prov)}</div></div>
+        <div class="p-ws"><div class="p-ws-l">Place</div><div class="p-ws-v" style="color:#ea580c">${place>0?'− '+fmt(place):'—'}</div></div>
+        <div class="p-ws"><div class="p-ws-l">Courant</div><div class="p-ws-v" style="color:#ea580c">${courant>0?'− '+fmt(courant):'—'}</div></div>
+        <div class="p-ws"><div class="p-ws-l">Employé</div><div class="p-ws-v" style="color:#ea580c">${employe>0?'− '+fmt(employe):'—'}</div></div>
+        <div class="p-ws"><div class="p-ws-l">Net semaine</div><div class="p-ws-v" style="color:#16a34a">${fmt(net)}</div></div>
       </div>
       <table class="ptbl">
         <thead><tr><th style="text-align:left;padding-left:10px">Jour</th><th>CB</th><th>Espèces</th><th class="th-tot">Total</th></tr></thead>
@@ -773,8 +855,8 @@ function buildPrint(){
     </div>`;
   });
 
-  const totalProv=totalGrand*FEES_RATE;
-  const totalNet=totalGrand-totalProv-totalPlace-totalCourant-totalExtra;
+  const totalNet=Math.round((totalGrand-totalProv-totalPlace-totalCourant-totalEmploye)*100)/100;
+  const totalDeduc=totalProv+totalPlace+totalCourant+totalEmploye;
   const printed=new Date().toLocaleDateString('fr-FR',{day:'2-digit',month:'long',year:'numeric'});
   const dateStr=fete.debut&&fete.fin?`${fete.debut} → ${fete.fin}`:'';
 
@@ -793,27 +875,23 @@ function buildPrint(){
         Imprimé le ${printed}
       </div>
     </div>
-
     <div class="p-summary">
       <div class="p-sc cb"><div class="p-sl">Total CB</div><div class="p-sv">${fmt(totalCB)}</div></div>
       <div class="p-sc cash"><div class="p-sl">Total Espèces</div><div class="p-sv">${fmt(totalCash)}</div></div>
       <div class="p-sc tot"><div class="p-sl">Total Brut</div><div class="p-sv">${fmt(totalGrand)}</div></div>
       <div class="p-sc net"><div class="p-sl">Bénéfice Net</div><div class="p-sv">${fmt(totalNet)}</div></div>
     </div>
-
     ${weeksHTML}
-
     <div class="p-fees-block">
-      <div class="p-fees-title">Récapitulatif des frais — ${weeks.length} semaine${weeks.length!==1?'s':''}</div>
+      <div class="p-fees-title">📊 Récapitulatif total — ${weeks.length} semaine${weeks.length!==1?'s':''}</div>
       <div class="p-fee-row"><span class="pk">Total brut</span><span class="pv" style="color:#b45309">${fmt(totalGrand)}</span></div>
       <div class="p-fee-row"><span class="pk">Provision 33%</span><span class="pv" style="color:#dc2626">− ${fmt(totalProv)}</span></div>
       <div class="p-fee-row"><span class="pk">Frais de place</span><span class="pv" style="color:#ea580c">− ${fmt(totalPlace)}</span></div>
       <div class="p-fee-row"><span class="pk">Frais de courant</span><span class="pv" style="color:#ea580c">− ${fmt(totalCourant)}</span></div>
-      ${totalExtra>0?`<div class="p-fee-row"><span class="pk">${extraLabel}</span><span class="pv" style="color:#ea580c">− ${fmt(totalExtra)}</span></div>`:''}
-      <div class="p-fee-row net"><span class="pk">Bénéfice net total</span><span class="pv">${fmt(totalNet)}</span></div>
-      <div class="p-fee-sub">Total frais déduits : ${fmt(totalProv+totalPlace+totalCourant+totalExtra)}</div>
+      ${totalEmploye>0?`<div class="p-fee-row"><span class="pk">Employé</span><span class="pv" style="color:#ea580c">− ${fmt(totalEmploye)}</span></div>`:''}
+      <div class="p-fee-row net"><span class="pk">= Bénéfice net total</span><span class="pv">${fmt(totalNet)}</span></div>
+      <div class="p-fee-sub">Total déduit : ${fmt(totalDeduc)}</div>
     </div>
-
     <div class="p-footer">
       <span>${stand.emoji||'🎯'} ${stand.nom} — 🎪 ${fete.nom}</span>
       <span>${weeks.length} semaine${weeks.length!==1?'s':''} · ${printed}</span>
