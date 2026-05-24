@@ -1,15 +1,15 @@
 <!DOCTYPE html>
-<html lang="fr">
-<head>
-<meta charset="UTF-8">
+<!-- saved from url=(0049)file:///C:/Users/Grass/Downloads/index%20(6).html -->
+<html lang="fr"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Recettes Pro">
 <meta name="theme-color" content="#0a0b0e">
-<link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="manifest" href="file:///C:/Users/Grass/Downloads/manifest.json">
+<link rel="apple-touch-icon" href="file:///C:/Users/Grass/Downloads/icon-192.png">
 <title>Recettes Pro</title>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -187,6 +187,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .net-val{font-size:1.1rem;font-weight:800;color:var(--green)}
 .net-val.neg{color:var(--red)}
 
+.fee-label-inp{background:transparent;border:none;border-bottom:1px dashed var(--bdr2);color:var(--txt);font-size:.74rem;outline:none;font-family:inherit;flex:1;padding:2px 0;min-width:0}
+.fee-label-inp::placeholder{color:var(--dim)}
+.fee-label-inp:focus{border-bottom-color:var(--orange)}
 /* FEES CALC BLOCK — nouveau design détaillé */
 .fcb-row{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--bdr)}
 .fcb-label{font-size:.74rem;color:var(--txt);flex:1}
@@ -265,9 +268,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 </head>
 <body>
 
-<div id="loading"><div class="ld-logo">Recettes<em> Pro</em></div><div class="ld-sub">Chargement…</div><div class="ld-spin"></div></div>
+<div id="loading" style="display: none;"><div class="ld-logo">Recettes<em> Pro</em></div><div class="ld-sub">Chargement…</div><div class="ld-spin"></div></div>
 
-<div id="setup-screen">
+<div id="setup-screen" style="display: flex;">
   <div class="setup-logo">Recettes<em> Pro</em></div>
   <div class="setup-title">Créer votre code secret</div>
   <div class="setup-desc">Choisissez un code partagé entre vous deux. Minimum 4 caractères.</div>
@@ -350,7 +353,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     <div class="modal-title" id="standModalTitle">Nouveau stand</div>
     <div class="emoji-grid" id="standEmojiGrid"></div>
     <div class="modal-label">Nom du stand</div>
-    <input class="modal-inp" id="standNom" type="text" placeholder="ex: Tir à l'air, Jet Ball…" maxlength="30" autocomplete="off">
+    <input class="modal-inp" id="standNom" type="text" placeholder="ex: Tir à l&#39;air, Jet Ball…" maxlength="30" autocomplete="off">
     <div class="modal-row">
       <button class="mbtn sec" id="standCancel">Annuler</button>
       <button class="mbtn pri" id="standSave">Ajouter</button>
@@ -436,10 +439,10 @@ const fmt=v=>{
 };
 // calcNet : fonction centrale unique pour tous les calculs
 function calcNet(grand,fees){
-  const prov=Math.round(grand*FEES_RATE*100)/100;
-  const place=parseA(fees.place),courant=parseA(fees.courant),employe=parseA(fees.employe);
-  const net=Math.round((grand-prov-place-courant-employe)*100)/100;
-  return{prov,place,courant,employe,net};
+  const prov=Math.round(grand/3*100)/100;
+  const place=parseA(fees.place),courant=parseA(fees.courant),employe=parseA(fees.employe),extra=parseA(fees.extra);
+  const net=Math.round((grand-prov-place-courant-employe-extra)*100)/100;
+  return{prov,place,courant,employe,extra,net};
 }
 // ───────────────────────────────────────────────────────────
 
@@ -449,7 +452,7 @@ function showToast(m='✓ Sauvegardé'){$('toast').textContent=m;$('toast').clas
 function setPage(n){document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id==='page-'+n));}
 function computeTotals(days){let tCB=0,tCash=0;const dt=days.map(d=>{const cb=parseA(d.cb),cash=parseA(d.cash);tCB+=cb;tCash+=cash;return{cb,cash,total:cb+cash};});return{dt,tCB,tCash,grand:tCB+tCash};}
 function uid(){return Date.now()+'_'+Math.random().toString(36).slice(2);}
-function emptyWeek(num,year){return{id:'w'+uid(),num,year,days:DAYS.map(()=>({date:'',cb:'',cash:''})),fees:{place:'',courant:'',employe:''}};}
+function emptyWeek(num,year){return{id:'w'+uid(),num,year,days:DAYS.map(()=>({date:'',cb:'',cash:''})),fees:{place:'',courant:'',employe:'',extra:'',extraLabel:''}};}
 function getCurWY(){const n=new Date(),d1=new Date(n.getFullYear(),0,1);return{year:n.getFullYear(),week:Math.ceil(((n-d1)/86400000+d1.getDay()+1)/7)};}
 function getNextWeek(stand){
   if(stand&&stand.weeks&&stand.weeks.length){const s=[...stand.weeks].sort((a,b)=>b.year-a.year||b.num-a.num);let{num,year}=s[0];num++;if(num>52){num=1;year++;}return{week:num,year};}
@@ -672,6 +675,8 @@ function renderWeekGrid(stand){
   // Migrer anciens fees sans employe
   const fees=wk.fees||{};
   if(fees.employe===undefined)fees.employe='';
+  if(fees.extra===undefined)fees.extra='';
+  if(fees.extraLabel===undefined)fees.extraLabel='';
   renderFees(grand,fees);
   const cards=grid.querySelectorAll('.day-card');if(cards[ti])setTimeout(()=>cards[ti].scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'}),80);
   grid.addEventListener('input',e=>{
@@ -690,8 +695,8 @@ function recomp(dt,tCB,tCash,grand){
 
 // ─── NOUVEAU renderFees : détail visuel complet + calcul propre ───
 function renderFees(grand,fees){
-  const{prov,place,courant,employe,net}=calcNet(grand,fees);
-  const tot=prov+place+courant+employe;
+  const{prov,place,courant,employe,extra,net}=calcNet(grand,fees);
+  const tot=prov+place+courant+employe+extra;
   $('feesPanel').innerHTML=`
 <div class="fees-title">💰 Détail des frais & bénéfice net</div>
 <div class="fcb-row fcb-brut">
@@ -715,6 +720,10 @@ function renderFees(grand,fees){
   <div class="fcb-label">Employé</div>
   <div class="fcb-right"><input class="fee-inp" id="feeEmploye" type="text" inputmode="decimal" placeholder="0,00" value="${fees.employe||''}"><span class="fcb-val red" id="calcEmploye">${employe>0?'− '+fmt(employe):'—'}</span></div>
 </div>
+<div class="fcb-row fcb-input-row">
+  <input class="fee-label-inp" id="feeExtraLabel" type="text" placeholder="Autre frais…" maxlength="30" value="${fees.extraLabel||''}">
+  <div class="fcb-right"><input class="fee-inp" id="feeExtra" type="text" inputmode="decimal" placeholder="0,00" value="${fees.extra||''}"><span class="fcb-val red" id="calcExtra">${extra>0?'− '+fmt(extra):'—'}</span></div>
+</div>
 <div class="fcb-row fcb-total-deduc">
   <div class="fcb-label">Total déduit</div>
   <div class="fcb-val red" id="totalDeduc">− ${fmt(tot)}</div>
@@ -723,27 +732,29 @@ function renderFees(grand,fees){
   <div class="fcb-result-label">= Bénéfice net</div>
   <div class="net-val${net<0?' neg':''}" id="netVal">${fmt(net)}</div>
 </div>`;
-  // Listener unique qui relit TOUS les champs ensemble
   function updFees(){
     const wk=getCurWeek();if(!wk)return;
     const newFees={
       place:$('feePlace')?$('feePlace').value:'',
       courant:$('feeCourant')?$('feeCourant').value:'',
-      employe:$('feeEmploye')?$('feeEmploye').value:''
+      employe:$('feeEmploye')?$('feeEmploye').value:'',
+      extra:$('feeExtra')?$('feeExtra').value:'',
+      extraLabel:$('feeExtraLabel')?$('feeExtraLabel').value:''
     };
     wk.fees=newFees;saveCurrentWeek(undefined,newFees);
     const{grand:g2}=computeTotals(wk.days);
-    const{prov:p2,place:pl2,courant:c2,employe:e2,net:n2}=calcNet(g2,newFees);
-    const tot2=p2+pl2+c2+e2;
+    const{prov:p2,place:pl2,courant:c2,employe:e2,extra:ex2,net:n2}=calcNet(g2,newFees);
+    const tot2=p2+pl2+c2+e2+ex2;
     const set=(id,v)=>{const el=$(id);if(el)el.textContent=v;};
     set('calcProv','− '+fmt(p2));
     set('calcPlace',pl2>0?'− '+fmt(pl2):'—');
     set('calcCourant',c2>0?'− '+fmt(c2):'—');
     set('calcEmploye',e2>0?'− '+fmt(e2):'—');
+    set('calcExtra',ex2>0?'− '+fmt(ex2):'—');
     set('totalDeduc','− '+fmt(tot2));
     const nv=$('netVal');if(nv){nv.textContent=fmt(n2);nv.className='net-val'+(n2<0?' neg':'');}
   }
-  ['feePlace','feeCourant','feeEmploye'].forEach(id=>{
+  ['feePlace','feeCourant','feeEmploye','feeExtra','feeExtraLabel'].forEach(id=>{
     const el=$(id);if(el)el.addEventListener('input',updFees);
   });
 }
@@ -751,7 +762,7 @@ function renderFees(grand,fees){
 
 $('resetBtn').addEventListener('click',()=>{
   const wk=getCurWeek();if(!wk)return;if(!confirm(`Réinitialiser la semaine S${wk.num} — ${wk.year} ?`))return;
-  wk.days=DAYS.map(()=>({date:'',cb:'',cash:''}));wk.fees={place:'',courant:'',employe:''};
+  wk.days=DAYS.map(()=>({date:'',cb:'',cash:''}));wk.fees={place:'',courant:'',employe:'',extra:'',extraLabel:''};
   const fete=getFete(curFeteId);saveFete(fete);const stand=getStand(fete,curStandId);renderWeekGrid(stand);showToast('↺ Réinitialisée');
 });
 
@@ -913,5 +924,6 @@ async function init(){
 }
 init();
 </script>
-</body>
-</html>
+
+
+</body></html>
