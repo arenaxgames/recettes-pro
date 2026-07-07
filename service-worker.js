@@ -1,4 +1,4 @@
-const CACHE = 'recettes-pro-v2';
+const CACHE = 'recettes-pro-v3';
 const FILES = ['/recettes-pro/', '/recettes-pro/index.html', '/recettes-pro/manifest.json'];
 
 self.addEventListener('install', e => {
