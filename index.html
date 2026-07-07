@@ -8,8 +8,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Recettes Pro">
 <meta name="theme-color" content="#0a0b0e">
-<link rel="manifest" href="file:///C:/Users/Grass/Downloads/manifest.json">
-<link rel="apple-touch-icon" href="file:///C:/Users/Grass/Downloads/icon-192.png">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
 <title>Recettes Pro</title>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -270,16 +270,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 
 <div id="loading" style="display: none;"><div class="ld-logo">Recettes<em> Pro</em></div><div class="ld-sub">Chargement…</div><div class="ld-spin"></div></div>
 
-<div id="setup-screen" style="display: flex;">
-  <div class="setup-logo">Recettes<em> Pro</em></div>
-  <div class="setup-title">Créer votre code secret</div>
-  <div class="setup-desc">Choisissez un code partagé entre vous deux. Minimum 4 caractères.</div>
-  <input class="setup-inp" id="setupInp" type="password" placeholder="votre code" maxlength="30" autocomplete="new-password">
-  <button class="setup-btn" id="setupBtn">Créer le code</button>
-  <div class="setup-err" id="setupErr"></div>
-  <div class="setup-hint">Sur l'autre téléphone, entrez le même code pour accéder aux mêmes données.</div>
-</div>
-
 <div id="lock-screen">
   <div class="lock-logo">Recettes<em> Pro</em></div>
   <div class="lock-sub">Accès privé</div>
@@ -423,6 +413,7 @@ let appData={fetes:[]};
 let selectedWeekIds=new Set();
 
 const $=id=>document.getElementById(id);
+const escapeHtml=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
 // ─── FIXES CALCUL ──────────────────────────────────────────
 // parseA : nettoie tous les espaces (y compris insécables français \u00a0 \u202f)
@@ -461,9 +452,8 @@ function getNextWeek(stand){
 
 // HASH & SUPABASE
 function hashStr(s){let h=0xABCD1234;const str=s+'rp_xg_2025_private';for(let i=0;i<str.length;i++){h=Math.imul(h^str.charCodeAt(i),0x9e3779b9);h^=h>>>16;}return(h>>>0).toString(16).padStart(8,'0');}
-const getLocalHash=()=>localStorage.getItem('rp_h2');
-const setLocalHash=s=>localStorage.setItem('rp_h2',hashStr(s));
-const checkSecret=s=>getLocalHash()===hashStr(s);
+const FIXED_HASH=hashStr('068315');
+const checkSecret=s=>FIXED_HASH===hashStr(s);
 
 async function supaGet(){const r=await fetch(`${SUPA_URL}/rest/v1/recettes_data?id=eq.${dataRowId}&select=data`,{headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}});if(!r.ok)throw new Error('GET '+r.status);const rows=await r.json();return(rows&&rows.length)?rows[0].data:null;}
 async function supaUpsert(data){const r=await fetch(`${SUPA_URL}/rest/v1/recettes_data`,{method:'POST',headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':'resolution=merge-duplicates'},body:JSON.stringify({id:dataRowId,data,updated_at:new Date().toISOString()})});if(!r.ok){const t=await r.text();throw new Error('UPSERT '+r.status+' '+t);}}
@@ -486,9 +476,7 @@ $('lockBtnG').addEventListener('click',showLock);
 $('lockSubmitBtn').addEventListener('click',tryUnlock);
 $('lockInp').addEventListener('keydown',e=>{if(e.key==='Enter')tryUnlock();});
 $('eyeBtn').addEventListener('click',()=>{const i=$('lockInp');i.type=i.type==='password'?'text':'password';});
-async function tryUnlock(){const val=$('lockInp').value.trim();if(!val)return;if(!checkSecret(val)){$('lockInp').classList.add('err');$('lockMsg').textContent='Code incorrect';setTimeout(()=>{$('lockInp').classList.remove('err');$('lockMsg').textContent='';},1200);return;}dataRowId=getLocalHash();$('lock-screen').style.display='none';$('loading').style.display='flex';$('loading').querySelector('.ld-sub').textContent='Chargement…';await loadFromCloud();$('loading').style.display='none';isUnlocked=true;$('app').style.display='flex';renderFetes();startPolling();}
-$('setupBtn').addEventListener('click',()=>{const val=$('setupInp').value.trim();if(!val||val.length<4){$('setupErr').textContent='Minimum 4 caractères';return;}setLocalHash(val);$('setup-screen').style.display='none';$('lock-screen').style.display='flex';showToast('✓ Code créé !');});
-$('setupInp').addEventListener('keydown',e=>{if(e.key==='Enter')$('setupBtn').click();});
+async function tryUnlock(){const val=$('lockInp').value.trim();if(!val)return;if(!checkSecret(val)){$('lockInp').classList.add('err');$('lockMsg').textContent='Code incorrect';setTimeout(()=>{$('lockInp').classList.remove('err');$('lockMsg').textContent='';},1200);return;}dataRowId=FIXED_HASH;$('lock-screen').style.display='none';$('loading').style.display='flex';$('loading').querySelector('.ld-sub').textContent='Chargement…';await loadFromCloud();$('loading').style.display='none';isUnlocked=true;$('app').style.display='flex';renderFetes();startPolling();}
 
 // TOPBAR
 function setTopbar({back,backFn,title,sub,right}={}){
@@ -515,8 +503,8 @@ function renderFetes(){
         <div class="fete-card-top">
           <div class="fete-icon">🎪</div>
           <div class="fete-info">
-            <div class="fete-name">${f.nom}</div>
-            ${f.ville?`<div class="fete-city">📍 ${f.ville}</div>`:''}
+            <div class="fete-name">${escapeHtml(f.nom)}</div>
+            ${f.ville?`<div class="fete-city">📍 ${escapeHtml(f.ville)}</div>`:''}
             ${dateStr?`<div class="fete-dates">📅 ${dateStr}</div>`:''}
           </div>
           <div class="fete-arr">›</div>
@@ -559,7 +547,7 @@ function goStands(){curStandId=null;curWIdx=0;renderStands();}
 function renderStands(){
   const fete=getFete(curFeteId);if(!fete)return;
   const dateStr=fete.debut&&fete.fin?`${fete.debut} → ${fete.fin}`:fete.debut||'';
-  setTopbar({back:'‹ Accueil',backFn:goFetes,title:`🎪 ${fete.nom}`,sub:[(fete.ville?`📍 ${fete.ville}`:''),dateStr].filter(Boolean).join(' · '),right:`<button class="ib" id="editFeteBtn">✏️</button><button class="ib" id="delFeteBtn" style="color:var(--red)">🗑</button>`});
+  setTopbar({back:'‹ Accueil',backFn:goFetes,title:`🎪 ${escapeHtml(fete.nom)}`,sub:[(fete.ville?`📍 ${escapeHtml(fete.ville)}`:''),dateStr].filter(Boolean).join(' · '),right:`<button class="ib" id="editFeteBtn">✏️</button><button class="ib" id="delFeteBtn" style="color:var(--red)">🗑</button>`});
   $('editFeteBtn').addEventListener('click',()=>openFeteModal(curFeteId));
   $('delFeteBtn').addEventListener('click',()=>{const f=getFete(curFeteId);if(!confirm(`Supprimer "${f.nom}" ?`))return;saveFetes(getFetes().filter(f=>f.id!==curFeteId));curFeteId=null;renderFetes();});
   setPage('stands');
@@ -577,7 +565,7 @@ function renderStands(){
       h+=`<div class="stand-card" data-id="${s.id}">
         <div class="stand-icon">${s.emoji||'🎯'}</div>
         <div class="stand-info">
-          <div class="stand-name">${s.nom}</div>
+          <div class="stand-name">${escapeHtml(s.nom)}</div>
           <div class="stand-meta">${(s.weeks||[]).length} semaine${(s.weeks||[]).length!==1?'s':''} · Net : ${totalNet!==0?fmt(totalNet):'—'}</div>
         </div>
         <div class="stand-total"><div class="stand-total-v">${totalGrand>0?fmt(totalGrand):'—'}</div><div class="stand-total-l">Brut</div></div>
@@ -615,7 +603,7 @@ function renderStandView(){
   const stand=getStand(fete,curStandId);if(!stand)return;
   if(!stand.weeks||!stand.weeks.length){const{year,week}=getCurWY();stand.weeks=[emptyWeek(week,year)];saveFete(fete);}
   stand.weeks.sort((a,b)=>b.year-a.year||b.num-a.num);
-  setTopbar({back:'‹ Fête',backFn:goStands,title:`${stand.emoji||'🎯'} ${stand.nom}`,sub:`🎪 ${fete.nom}`,right:`<button class="ib" id="editStandBtn">✏️</button><button class="ib" id="delStandBtn" style="color:var(--red)">🗑</button>`});
+  setTopbar({back:'‹ Fête',backFn:goStands,title:`${stand.emoji||'🎯'} ${escapeHtml(stand.nom)}`,sub:`🎪 ${escapeHtml(fete.nom)}`,right:`<button class="ib" id="editStandBtn">✏️</button><button class="ib" id="delStandBtn" style="color:var(--red)">🗑</button>`});
   $('editStandBtn').addEventListener('click',()=>openStandModal(curStandId));
   $('delStandBtn').addEventListener('click',()=>{if(!confirm(`Supprimer "${stand.nom}" ?`))return;fete.stands=fete.stands.filter(s=>s.id!==curStandId);saveFete(fete);goStands();});
   $('weekNavBar').style.display='block';
@@ -877,8 +865,8 @@ function buildPrint(){
     <div class="p-header">
       <div>
         <div class="p-title">Recettes<span> Pro</span></div>
-        <div class="p-sub">${stand.emoji||'🎯'} ${stand.nom}</div>
-        <div style="font-size:.72rem;color:#555;margin-top:3px">🎪 ${fete.nom}${fete.ville?' · 📍'+fete.ville:''}</div>
+        <div class="p-sub">${stand.emoji||'🎯'} ${escapeHtml(stand.nom)}</div>
+        <div style="font-size:.72rem;color:#555;margin-top:3px">🎪 ${escapeHtml(fete.nom)}${fete.ville?' · 📍'+escapeHtml(fete.ville):''}</div>
       </div>
       <div class="p-meta">
         <strong>${weeks.length} semaine${weeks.length!==1?'s':''} sélectionnée${weeks.length!==1?'s':''}</strong><br>
@@ -904,12 +892,13 @@ function buildPrint(){
       <div class="p-fee-sub">Total déduit : ${fmt(totalDeduc)}</div>
     </div>
     <div class="p-footer">
-      <span>${stand.emoji||'🎯'} ${stand.nom} — 🎪 ${fete.nom}</span>
+      <span>${stand.emoji||'🎯'} ${escapeHtml(stand.nom)} — 🎪 ${escapeHtml(fete.nom)}</span>
       <span>${weeks.length} semaine${weeks.length!==1?'s':''} · ${printed}</span>
     </div>`;
 }
 
-document.addEventListener('visibilitychange',()=>{if(document.hidden){clearTimeout(window._bgL);window._bgL=setTimeout(()=>{if(isUnlocked)showLock();},30000);}else clearTimeout(window._bgL);});
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&isUnlocked)showLock();});
+window.addEventListener('pagehide',()=>{if(isUnlocked)showLock();});
 
 if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('service-worker.js').catch(e=>console.log('SW:',e)));}
 const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent);
@@ -918,9 +907,10 @@ if(isIOS&&!isStandalone&&!localStorage.getItem('rp_ios_hint')){setTimeout(()=>$(
 $('hintClose').addEventListener('click',()=>{$('ios-hint').classList.remove('show');localStorage.setItem('rp_ios_hint','1');});
 
 async function init(){
-  const hash=getLocalHash();
-  if(hash){dataRowId=hash;await loadFromCloud();$('loading').style.display='none';$('lock-screen').style.display='flex';}
-  else{$('loading').style.display='none';$('setup-screen').style.display='flex';}
+  dataRowId=FIXED_HASH;
+  await loadFromCloud();
+  $('loading').style.display='none';
+  $('lock-screen').style.display='flex';
 }
 init();
 </script>
